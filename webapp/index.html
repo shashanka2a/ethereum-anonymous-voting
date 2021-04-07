@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Anonymous Ethereum Voting</title>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.4/web3.min.js" integrity="sha512-TTGImODeszogiro9DUvleC9NJVnxO6M0+69nbM3YE9SYcVe4wZp2XYpELtcikuFZO9vjXNPyeoHAhS5DHzX1ZQ==" crossorigin="anonymous"></script>
+    </head>
+    <body>
+        <h1>Smart Contract</h1>
+        <!-- Button to connect Metamask -->
+        <button onclick="connectAddress()">Connect With Metamask</button>
+
+        <h3>Election Address</h2>
+        <input id='contractAddress'>
+        <button onclick="connectToContract('contractAddress')">Setup Contract</button>
+        
+        <script src="js/election_contract_abi.js"></script>
+        <script src="js/test_contract_abi.js"></script>
+        <script src="js/connection.js"></script>
+    </body>
+</html>

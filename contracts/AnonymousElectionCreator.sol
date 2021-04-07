@@ -6,7 +6,7 @@ contract AnonymousElectionCreator {
     address private owner;
     
     
-    mapping(string => address) elections;
+    mapping(string => address) private elections;
     
     constructor() {
         owner = msg.sender;
@@ -17,7 +17,7 @@ contract AnonymousElectionCreator {
         require(elections[_electionName] == address(0));
         
         // create election
-        AnonymousElection election = new AnonymousElection(_candidates, _voters, _numVotes);
+        AnonymousElection election = new AnonymousElection(_candidates, _voters, _numVotes, msg.sender);
         
         // create mapping between _electionName and election address
         elections[_electionName] = address(election);

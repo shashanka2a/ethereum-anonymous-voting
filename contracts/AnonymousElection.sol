@@ -13,8 +13,8 @@ contract AnonymousElection {
     uint256 numVotes;
     
     
-    constructor(string[] memory _candidates, address[] memory _voters, uint256 _numVotes) {
-        owner = msg.sender;
+    constructor(string[] memory _candidates, address[] memory _voters, uint256 _numVotes, address _owner) {
+        owner = _owner;
         candidates = _candidates;
         voters = _voters;
         

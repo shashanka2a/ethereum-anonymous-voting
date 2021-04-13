@@ -30,12 +30,12 @@ contract AnonymousElection {
     mapping(address => uint256) private voterPK; // mapping of users to their public keys, in the form of g^(x) (mod p)
     mapping(uint256 => address) private pkToVoter; // mapping of voter's private key to voter's address
     
-    uint256 m; // 2^m > number of candidates, used for tallying votes
+    uint256 private m; // 2^m > number of candidates, used for tallying votes
     
     // nubmer representing the multiplication of all votes input
     // by round 3, encryptedVotes = g^v where v = 2^(0)c_1 + 2^(1)c_2 + ... + 2^(n-1)c_n where c_i is the number of votes for candidate i
-    uint256 encryptedVotes;
-    mapping(string => uint256) candidateVotesMapping;
+    uint256 private encryptedVotes;
+    mapping(string => uint256) private candidateVotesMapping;
     
     
     
@@ -59,21 +59,26 @@ contract AnonymousElection {
         encryptedVotes = 1; // multiplicative identity since votes encrypted votes will be multiplied together
     }
     
-    function calculateHash(uint256 _gv, uint256 _pk, address _a) public view returns (uint256) {
-        return uint256(sha256(abi.encodePacked(g, _gv, _pk, _a)));
-    }
-    
+    // ""Right-to-left binary method" of modular power
     function modPow(uint256 _base, uint256 _pow, uint256 _modulus) public pure returns (uint256) {
         if (_modulus == 1) {
             return 0;
         }
-        
-        uint256 c = 1;
-        for (uint256 e = 0; e < _pow; e++) {
-            c = (c * _base) % _modulus;
+        uint256 r = 1;
+        _base = _base % _modulus;
+        while (_pow > 0) {
+            if (_pow % 2 == 1) {
+                r = mulmod(r, _base, _modulus);
+            }
+            _pow = _pow >> 1;
+            _base = mulmod(_base, _base, _modulus);
         }
-        
-        return c;
+        return r;
+    }
+    
+    // for the Zero-Knowledge proof in submitPK
+    function calculatePKHash(uint256 _gv, uint256 _pk, address _a) public view returns (uint256) {
+        return uint256(sha256(abi.encodePacked(g, _gv, _pk, _a)));
     }
     
     function submitPK(uint256 _pk, uint256 _gv, uint256 _r) public {
@@ -91,7 +96,7 @@ contract AnonymousElection {
         //   Voter calculates hash z = sha256(g, g^v, pk, address)
         //   Voter sends r = v - x*z
         //   Contract calculates whether g^(v) == g^(r)*(pk)^(sha256(g, g^v, pk, address))
-        uint256 hash = calculateHash(_gv, _pk, msg.sender);
+        uint256 hash = calculatePKHash(_gv, _pk, msg.sender);
         uint256 potentialgv = mulmod(modPow(g, _r, p), modPow(_pk, hash, p), p);
         require(_gv == potentialgv);
         

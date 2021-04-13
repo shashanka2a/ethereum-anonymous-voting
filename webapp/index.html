@@ -1,29 +1,95 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Anonymous Ethereum Voting</title>
 
-        <script src='js/bignumber.min.js'></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.4/web3.min.js" integrity="sha512-TTGImODeszogiro9DUvleC9NJVnxO6M0+69nbM3YE9SYcVe4wZp2XYpELtcikuFZO9vjXNPyeoHAhS5DHzX1ZQ==" crossorigin="anonymous"></script>
-    </head>
-    <body>
-        <h1>Anonymous Voting Ethereum Smart Contract</h1>
-        <p><a href="createElection.html">Create anonymous election</a></p>
-        <!-- Button to connect Metamask -->
-        <button onclick="connectMetamask()">Connect With Metamask</button>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymous Ethereum Voting</title>
 
-        <h3>Test Contract Address</h3>
-        <p>0xbFFBc62b52b9314b0651a39FBe2620417d382911</p>
-        <input id='contractAddress'>
-        <button onclick="testContractConnection('contractAddress')">Test Contract</button>
+    <!-- Google Fonts -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300italic,700,700italic">
+
+    <!-- CSS Reset -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.css">
+
+    <!-- Milligram CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
+
+    <link rel="stylesheet" href="css/main.css">
+
+    <link rel="stylesheet" href="css/spinner/css-loader.css">
+
+    <script src='js/bignumber.min.js'></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.4/web3.min.js"
+        integrity="sha512-TTGImODeszogiro9DUvleC9NJVnxO6M0+69nbM3YE9SYcVe4wZp2XYpELtcikuFZO9vjXNPyeoHAhS5DHzX1ZQ=="
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="loader loader-default" data-text="Communicating with smart contract..."></div>
+    <div class="container">
+        <div>
+            <h1>Anonymous Voting</h1>
+        </div>
+        <div>
+            <p><a href="createElection.html">Create anonymous election</a></p>
+        </div>
+
+
+        <div id="metamask-div">
+            <!-- Button to connect Metamask -->
+            <button onclick="connectMetamask()">Connect With Metamask</button>
+        </div>
+        <hr>
+
+        <div id="election-connection-div">
+            <h3>Enter Election Name</h3>
+            <input placeholder="Election name">
+            <button>Connect to Election</button>
+        </div>
+        <hr>
+
+        <div id="pk-div">
+            <h3>Setup Your Public Key Encryption</h3>
+            <button>Setup</button>
+        </div>
+        <hr>
+
+        <div id="candidates-div">
+            <h3>Click to Vote</h3>
+            <div id="candidates-grid">
+                <div class="row">
+                    <div class="column" onclick="alert('hi')"><span class="column-interior">Candidate 1</span></div>
+                    <div class="column"><span class="column-interior">Candidate 2</span></div>
+                    <div class="column"><span class="column-interior">Candidate 3</span></div>
+                    <div class="column"><span class="column-interior">Candidate 4</span></div>
+                </div>
+                <div class="row">
+                    <div class="column" onclick="alert('hi')"><span class="column-interior">.column</span></div>
+                    <div class="column"><span class="column-interior">.column</span></div>
+                    <div class="column"><span class="column-interior">.column</span></div>
+                    <div class="column"><span class="column-interior">.column</span></div>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="overlay" style="display:none;">
+            <div class="spinner"></div>
+            <br />
+            Loading...
+        </div>
+    </div>
+
+    <script>
         
-        <script src="js/election_contract_abi.js"></script>
-        <script src="js/test_contract_abi.js"></script>
-        <script src="js/ElectionCreatorHandler.js"></script>
-        <script src="js/ElectionHandler.js"></script>
-        <script src="js/processor.js"></script>
-        <!-- <script src="js/connection.js"></script> -->
-    </body>
+    </script>
+    <script src="js/election_contract_abi.js"></script>
+    <script src="js/test_contract_abi.js"></script>
+    <script src="js/ElectionCreatorHandler.js"></script>
+    <script src="js/ElectionHandler.js"></script>
+    <script src="js/processor.js"></script>
+    <!-- <script src="js/connection.js"></script> -->
+</body>
+
 </html>

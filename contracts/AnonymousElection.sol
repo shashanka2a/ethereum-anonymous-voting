@@ -39,11 +39,9 @@ contract AnonymousElection {
     
     
     
-    constructor(string[] memory _candidates, address[] memory _voters, address _owner, uint256 _p, uint256 _g, uint _m) {
+    constructor(string[] memory _candidates, address[] memory _voters, uint256 _p, uint256 _g, address _owner) {
         // check to ensure that this election makes sense, has >0 voters and candidates
         require(_candidates.length > 0 && _voters.length > 0, "candidate list and voter list both need to have non-zero length");
-        // require that m is the smallest variable such that 2^m > number of candidates
-        require(2**_m > _candidates.length && 2**(_m - 1) <= _candidates.length);
         
         round = 1;
         owner = _owner;
@@ -52,7 +50,9 @@ contract AnonymousElection {
         
         p = _p;
         g = _g;
-        m = _m;
+        m = 0;
+        
+        for (m = 0; 2**m <= _voters.length; m++){}
         
         submittedPKs = 0;
         submittedVotes = 0;

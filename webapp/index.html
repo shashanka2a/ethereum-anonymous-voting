@@ -26,36 +26,40 @@
 </head>
 
 <body>
-    <div class="loader loader-default" data-text="Communicating with smart contract..."></div>
+    <div id="spinner-overlay" class="loader loader-default is-active" data-text="Communicating with smart contract..."></div>
     <div class="container">
         <div>
             <h1>Anonymous Voting</h1>
         </div>
-        <div>
-            <p><a href="createElection.html">Create anonymous election</a></p>
+        <div id="account-div">
+            <h5 id="connected-account-header"></h5>
         </div>
+        <!-- <div>
+            <p><a href="createElection.html">Create anonymous election</a></p>
+        </div> -->
 
-
+        <!-- Div to connect webapp to Metamask -->
         <div id="metamask-div">
             <!-- Button to connect Metamask -->
-            <button onclick="connectMetamask()">Connect With Metamask</button>
+            <button onclick="app.connectMetamask()">Connect With Metamask</button>
+            <hr>
         </div>
-        <hr>
 
-        <div id="election-connection-div">
-            <h3>Enter Election Name</h3>
-            <input placeholder="Election name">
+        <!--  -->
+        <div id="election-connection-div" class="invisible">
+            <h3>Enter Election ID</h3>
+            <input placeholder="Election ID">
             <button>Connect to Election</button>
+            <hr>
         </div>
-        <hr>
 
-        <div id="pk-div">
+        <div id="pk-div" class="invisible">
             <h3>Setup Your Public Key Encryption</h3>
             <button>Setup</button>
+            <hr>
         </div>
-        <hr>
 
-        <div id="candidates-div">
+        <div id="candidates-div" class="invisible">
             <h3>Click to Vote</h3>
             <div id="candidates-grid">
                 <div class="row">
@@ -72,23 +76,15 @@
                 </div>
             </div>
         </div>
-
-
-        <div id="overlay" style="display:none;">
-            <div class="spinner"></div>
-            <br />
-            Loading...
-        </div>
     </div>
 
-    <script>
-        
-    </script>
+    <script src="js/frontend/UI.js"></script>
     <script src="js/election_contract_abi.js"></script>
     <script src="js/test_contract_abi.js"></script>
     <script src="js/ElectionCreatorHandler.js"></script>
     <script src="js/ElectionHandler.js"></script>
-    <script src="js/processor.js"></script>
+    <script src="js/Processor.js"></script>
+    <script src="js/App.js"></script>
     <!-- <script src="js/connection.js"></script> -->
 </body>
 

@@ -1,8 +1,6 @@
-Anonymous Voting Election Creation
-Connected to MetaMask Account: 0x5c6f5cf7128c7968f527dfe8d4fccd41ec44853c
 Election Created
 Name: Thing1
-Address: 0x45376AaFD0873a6EA17Ec54E760135cD26f807ab
+Address: 0x68e1D5AeD860dcCC8a0F7665C118F2c5703295b9
 g (generator): 2
 p (prime): 164987
 Voters

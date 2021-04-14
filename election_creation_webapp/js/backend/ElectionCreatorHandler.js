@@ -23,7 +23,10 @@ class ElectionCreatorHandler {
         let p = 164987;
         let g = 2;
 
-        let electionAddress = await this.contract.methods.createElection(electionName, candidates, voters, p, g).call({from: account});
+        let electionAddress = await this.contract.methods.createElection(electionName, candidates, voters, p, g).send({from: account}).then((receipt) => {
+            console.log(receipt);
+        });
+        console.log(electionAddress);
 
         return electionAddress;
     }

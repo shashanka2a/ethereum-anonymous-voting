@@ -14,14 +14,13 @@ contract AnonymousElectionCreator {
         electionsList = new string[](0);
     }
     
-    function createElection(string memory _electionName, string[] memory _candidates, address[] memory _voters, 
-            uint256 _p, uint256 _g) public returns(address) {
+    function createElection(string memory _electionName, string[] memory _candidates, address[] memory _voters, uint256 _p, uint256 _g) public returns(address) {
         // make sure that the _electionName is unique
         require(electionsMapping[_electionName] == address(0), "Election name not unique. An election already exists with that name");
         require(_candidates.length > 0 && _voters.length > 0, "candidate list and voter list both need to have non-zero length");
         
         // create election
-        AnonymousElection election = new AnonymousElection(_candidates, _voters, _p, _g, msg.sender);
+        AnonymousElection election = new AnonymousElection(_candidates, _voters, _p, _g, msg.sender, _electionName);
         
         // create mapping between _electionName and election address
         electionsMapping[_electionName] = address(election);

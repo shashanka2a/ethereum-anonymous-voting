@@ -41,6 +41,10 @@ class UI {
         document.getElementById('connected-account-header').innerHTML = `Connected to MetaMask Account: <b>${account}</b>`;
     }
 
+    getContractAddress() {
+        return document.getElementById('contract-address-input').value;
+    }
+
     displayCandidates(candidates) {
 
     }

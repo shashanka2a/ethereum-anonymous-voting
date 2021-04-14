@@ -5,6 +5,7 @@
 pragma solidity >=0.7.0 <0.9.0;
 
 contract AnonymousElection {
+    string name;
     // sets the owner of the election to the one who deploys the smart contract
     address private owner;
     
@@ -39,10 +40,11 @@ contract AnonymousElection {
     
     
     
-    constructor(string[] memory _candidates, address[] memory _voters, uint256 _p, uint256 _g, address _owner) {
+    constructor(string[] memory _candidates, address[] memory _voters, uint256 _p, uint256 _g, address _owner, string memory _name) {
         // check to ensure that this election makes sense, has >0 voters and candidates
         require(_candidates.length > 0 && _voters.length > 0, "candidate list and voter list both need to have non-zero length");
         
+        name = _name;
         round = 1;
         owner = _owner;
         candidates = _candidates;
@@ -52,7 +54,9 @@ contract AnonymousElection {
         g = _g;
         m = 0;
         
-        for (m = 0; 2**m <= _voters.length; m++){}
+        while (2**m <= _voters.length){
+            m++;
+        }
         
         submittedPKs = 0;
         submittedVotes = 0;
@@ -190,6 +194,10 @@ contract AnonymousElection {
         require(round == 4, "Election is still ongoing. Election needs to finish first");
         
         return winner;
+    }
+    
+    function canIVote(address _a) public view returns (bool) {
+        return canVote[_a];
     }
     
 }

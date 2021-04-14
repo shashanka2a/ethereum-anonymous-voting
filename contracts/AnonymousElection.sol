@@ -161,6 +161,13 @@ contract AnonymousElection {
     }
     
     
+    // return a tuple (really an array) that has the prime p and generator g
+    function getPG() public view returns (uint256[2] memory) {
+        uint256[2] memory pAndG = [p, g];
+        return pAndG;
+    }
+    
+    
     // returns the array of potential candidates
     function getCandidates() public view returns (string[] memory) {
         return candidates;
@@ -184,4 +191,5 @@ contract AnonymousElection {
         
         return winner;
     }
+    
 }

@@ -15,6 +15,12 @@ class UI {
 
         this.parametersValueDiv = document.getElementById('parameters-values-div');
         this.hideElem(this.parametersValueDiv);
+
+        this.electionParamsDiv = document.getElementById('election-params-div');
+        this.hideElem(this.electionParamsDiv);
+
+        this.electionCompletedDiv = document.getElementById('election-completed-div');
+        this.hideElem(this.electionCompletedDiv);
     }
 
     startSpinner() {
@@ -43,5 +49,41 @@ class UI {
 
     displayCandidates(candidates) {
 
+    }
+
+    getElectionCreatorAddress() {
+        return document.getElementById('election-creator-address').value;
+    }
+
+    setupElectionParams() {
+        this.hideElem(this.electionCreatorConnectionDiv);
+        this.showElem(this.electionParamsDiv);
+    }
+
+    getCandidates() {
+        return document.getElementById('candidates').value;
+    }
+
+    getVoters() {
+        return document.getElementById('voters').value;
+    }
+
+    getElectionName() {
+        return document.getElementById('election-name').value;
+    }
+
+    showCompleted(electionName, candidates, voters, p, g, address) {
+
+        document.getElementById('election-name-completed').innerHTML = electionName;
+        document.getElementById('election-address-completed').innerHTML = address;
+
+        document.getElementById('election-candidates-completed').innerHTML = candidates.reduce((acc, x) => {return `${acc}${x}, `}, "");
+        document.getElementById('election-voters-completed').innerHTML = voters.reduce((acc, x) => {return `${acc}${x}, `}, "");
+
+        document.getElementById('election-p-completed').innerHTML = p;
+        document.getElementById('election-g-completed').innerHTML = g;
+
+        this.hideElem(this.electionParamsDiv);
+        this.showElem(this.electionCompletedDiv);
     }
 }

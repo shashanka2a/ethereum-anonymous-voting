@@ -26,6 +26,14 @@ class Processor {
         }
         return this.account;
     }
+
+    // take in input string, split it into an array by commas, remove 
+    // 
+    seperateCommas(input) {
+        let a = input.split(',');
+        a = a.map((str) => {return str.trim()});
+        return a;
+    }
 }
 
 

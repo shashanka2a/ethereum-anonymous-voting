@@ -1,1 +1,0 @@
-let election_creator_contract_abi = JSON.parse('[]');

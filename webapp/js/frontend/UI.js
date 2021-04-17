@@ -10,8 +10,14 @@ class UI {
         this.electionConnectionDiv = document.getElementById('election-connection-div');
         this.hideElem(this.electionConnectionDiv);
 
-        this.pkDiv = document.getElementById('pk-div');
-        this.hideElem(this.pkDiv);
+        this.round1Div = document.getElementById('round1-div');
+        this.hideElem(this.round1Div);
+
+        this.round3Div = document.getElementById('round3-div');
+        this.hideElem(this.round3Div);
+
+        this.round4Div = document.getElementById('round4-div');
+        this.hideElem(this.round4Div);
 
         this.candidatesDiv = document.getElementById('candidates-div');
         this.hideElem(this.candidatesDiv);
@@ -45,7 +51,85 @@ class UI {
         return document.getElementById('contract-address-input').value;
     }
 
-    displayCandidates(candidates) {
+    showElectionAddress(address) {
+        document.getElementById('connected-address-header').innerHTML = `Election Address: <b>${address}</b>`;
+    }
 
+    setupRound1(p, g, isNew) {
+        document.getElementById('p').innerHTML = p;
+        document.getElementById('g').innerHTML = g;
+        if (isNew) {
+            this.hideElem(document.getElementById('reestablish-secret-div'));
+        } else {
+            this.showElem(document.getElementById('reestablish-secret-div'));
+        }
+        this.showElem(this.round1Div);
+    }
+
+    round1Update(x, pk) {
+        document.getElementById('secret-x').innerHTML = x;
+        document.getElementById('pk').innerHTML = pk;
+        this.hideElem(document.getElementById('round1-button'));
+    }
+
+    // This takes the name of a candidate and outputs a value between 1 and 37, meant for use with profile pictures
+    simpleImageNumberHash(candidateName) {
+        let num = 0;
+        for (let i = 0; i < candidateName.length; i++) {
+            num += candidateName.charCodeAt(i);
+        }
+        return (num % 37) + 1;
+    }
+
+    generateCard(candidateName, candidateIndex, canVoteNow, voteNum, isWinner, size=25) {
+        return `
+            <div class="column column-${size}">
+                <div class="card">
+                    <img src="img/faces/face (${this.simpleImageNumberHash(candidateName)}).png" alt="Avatar" style="width:100%">
+                    <div class="container">
+                        <h4><b>${candidateName}</b> ${isWinner ? '&#11088;' : ''}</h4>
+                        <h6>Votes: ${voteNum}</h6>
+                        ${ canVoteNow ? '<button onclick="app.vote(' + candidateIndex + ')">Vote</button>' : ''}
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
+    displayCandidates(candidates, canVoteNow = false, votes = null, winner = null) {
+        this.hideElem(this.electionConnectionDiv);
+        let candidateGrid = '';
+
+        let size = (candidates.length < 4) ? 33 : 25;
+
+        for (let i = 0; i < Math.ceil(candidates.length / 5); i++) {
+            candidateGrid += '<div class="row">';
+            for (let j = 0; j < 4 && i*4 + j < candidates.length; j++) {
+                let index = i*4 + j;
+                let voteNum = votes == null ? 'not available' : votes[i];
+                let isWinner = (winner == candidates[index]);
+                candidateGrid += this.generateCard(candidates[index], index, canVoteNow, voteNum, isWinner, size);
+            }
+            candidateGrid += '</div>';
+        }
+
+        this.candidatesDiv.innerHTML = candidateGrid;
+
+        this.showElem(this.candidatesDiv);
+    }
+
+    getSecretXInput() {
+        return document.getElementById('secret-x-input').value;
+    }
+
+    setupRound3() {
+        this.showElem(this.round3Div);
+    }
+
+    setupFinishedState(winner) {
+        this.hideElem(this.metaMaskDiv);
+        this.hideElem(this.round3Div);
+        document.getElementById('winner').innerHTML = ((winner == '') ? 'There is a tie' : winner);
+        this.showElem(this.round4Div);
     }
 }

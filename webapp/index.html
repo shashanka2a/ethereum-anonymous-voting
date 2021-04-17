@@ -23,16 +23,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.4/web3.min.js"
         integrity="sha512-TTGImODeszogiro9DUvleC9NJVnxO6M0+69nbM3YE9SYcVe4wZp2XYpELtcikuFZO9vjXNPyeoHAhS5DHzX1ZQ=="
         crossorigin="anonymous"></script>
+    <script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
 </head>
 
 <body>
-    <div id="spinner-overlay" class="loader loader-default is-active" data-text="Communicating with smart contract..."></div>
+    <div id="spinner-overlay" class="loader loader-default is-active" data-text="Communicating with smart contract...">
+    </div>
     <div class="container">
         <div>
             <h1>Anonymous Voting</h1>
         </div>
         <div id="account-div">
             <h5 id="connected-account-header"></h5>
+        </div>
+
+        <div id="election-address-div">
+            <h5 id="connected-address-header"></h5>
         </div>
 
         <!-- Div to connect webapp to Metamask -->
@@ -45,20 +51,37 @@
         <!--  -->
         <div id="election-connection-div" class="invisible">
             <h3>Enter Election Address</h3>
-            <sub>0x73e2cd2B186eE047b4d053F74CAeF43918b8C855</sub>
+            <sub>0xbE81FD62f625C394BD4065093285c1818749f1fa</sub>
             <input id="contract-address-input" placeholder="Election Address">
             <button onclick="app.connectContract()">Connect to Election</button>
             <hr>
         </div>
 
-        <div id="pk-div" class="invisible">
+        <div id="round1-div" class="invisible">
             <h3>Setup Your Public Key Encryption</h3>
-            <button>Setup</button>
+            <div>Prime <sub lang="latex"> ( p ) </sub>: <b><span id="p"></span></b></div>
+            <div>Generator <sub lang="latex"> ( g ) </sub>: <b><span id="g"></span></b></div>
+            <div>Your Secret &nbsp; <sub lang="latex"> ( x \in_{R} \mathbb{Z}_{p} )</sub> : <b><span id="secret-x">Not
+                        Setup</span></b></div>
+            <div>Your Public Key &nbsp; <sub lang="latex"> ( g^{x}\mod{p} ) </sub>: <b><span id="pk">Not
+                        Setup</span></b></div>
+            <div id='reestablish-secret-div'>Enter your previously assigned secret x value: <input id='secret-x-input'></div>
+            <button id='round1-button' onclick="app.setupPK()">Setup</button>
             <hr>
         </div>
 
+        <div id="round3-div">
+            <h3>Calculate Winner</h3>
+            <button onclick="app.calculateWinner()">Calculate</button>
+        </div>
+
+        <div id="round4-div">
+            <h3>Election Finished</h3>
+            <h4>Winner: <b><span id="winner"></span></b></h4>
+        </div>
+
+
         <div id="candidates-div" class="invisible">
-            <h3>Click to Vote</h3>
             <div id="candidates-grid">
                 <div class="row">
                     <div class="column" onclick="alert('hi')"><span class="column-interior">Candidate 1</span></div>
@@ -66,14 +89,22 @@
                     <div class="column"><span class="column-interior">Candidate 3</span></div>
                     <div class="column"><span class="column-interior">Candidate 4</span></div>
                 </div>
-                <div class="row">
-                    <div class="column" onclick="alert('hi')"><span class="column-interior">.column</span></div>
-                    <div class="column"><span class="column-interior">.column</span></div>
-                    <div class="column"><span class="column-interior">.column</span></div>
-                    <div class="column"><span class="column-interior">.column</span></div>
-                </div>
             </div>
         </div>
+
+        <!-- <div class="row">
+            <div class="column">
+                <div class="card">
+                    <img src="img/faces/face (1).png" alt="Avatar" style="width:100%">
+                    <div class="container">
+                        <h4><b>Candidate Name</b> &#11088;</h4>
+                        <h6>Votes: <span>0</span></h6>
+                        <button onclick="app.vote('index')">vote</button>
+                    </div>
+                </div>
+            </div>
+        </div> -->
+
     </div>
 
     <script src="js/frontend/UI.js"></script>

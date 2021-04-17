@@ -1,4 +1,4 @@
-pragma solidity >=0.7.0 <0.9.0;
+pragma solidity >=0.8.0 <0.9.0;
 
 import "./AnonymousElection.sol";
 
@@ -17,7 +17,12 @@ contract AnonymousElectionCreator {
     function createElection(string memory _electionName, string[] memory _candidates, address[] memory _voters, uint256 _p, uint256 _g) public returns(address) {
         // make sure that the _electionName is unique
         require(electionsMapping[_electionName] == address(0), "Election name not unique. An election already exists with that name");
-        require(_candidates.length > 0 && _voters.length > 0, "candidate list and voter list both need to have non-zero length");
+        require(_candidates.length > 1 && _voters.length > 0, "candidate list and voter list both need to have non-zero length, >1 candidate");
+        
+        // require none of the candidates are the empty string. If there is tie, winner is technically the empty string
+        for (uint256 i = 0; i < _candidates.length; i++) {
+            require(bytes(_candidates[i]).length != 0, "candidate cannot be empty string");
+        }
         
         // create election
         AnonymousElection election = new AnonymousElection(_candidates, _voters, _p, _g, msg.sender, _electionName);

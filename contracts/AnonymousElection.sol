@@ -2,7 +2,7 @@
 // By: Elijah Jasso
 // Voting algorithm comes from "Anonymous voting by two-round public discussion (2008)" by F. Hao, P.Y.A. Ryan, P. Zieliski
 
-pragma solidity >=0.7.0 <0.9.0;
+pragma solidity >=0.8.0 <0.9.0;
 
 contract AnonymousElection {
     string name;
@@ -12,6 +12,7 @@ contract AnonymousElection {
     string[] private candidates; // array of valid candidates
     string private winner; // winner of the election
     address[] private voters; // array of addresses that can submit votes
+    mapping(address => uint256) voterToIndex; // mapping of voter address to their index in voters
     mapping(address => bool) private canVote; // mapping that shows if an address can vote
     
     // indicates what round the election is on
@@ -30,19 +31,21 @@ contract AnonymousElection {
     uint256 private g; // generator
     mapping(address => uint256) private voterPK; // mapping of users to their public keys, in the form of g^(x) (mod p)
     mapping(uint256 => address) private pkToVoter; // mapping of voter's private key to voter's address
+    uint256[] allPK; // array of all voter PK's corresponding to voters index
     
     uint256 private m; // 2^m > number of candidates, used for tallying votes
     
     // nubmer representing the multiplication of all votes input
     // by round 3, encryptedVotes = g^v where v = 2^(0)c_1 + 2^(1)c_2 + ... + 2^(n-1)c_n where c_i is the number of votes for candidate i
     uint256 private encryptedVotes;
-    mapping(string => uint256) private candidateVotesMapping;
+    mapping(string => uint256) private candidateVotesMapping; 
+    uint256[] allCandidateVotes; // array of all the vote counts for each candidate
     
     
     
     constructor(string[] memory _candidates, address[] memory _voters, uint256 _p, uint256 _g, address _owner, string memory _name) {
-        // check to ensure that this election makes sense, has >0 voters and candidates
-        require(_candidates.length > 0 && _voters.length > 0, "candidate list and voter list both need to have non-zero length");
+        // check to ensure that this election makes sense, has >0 voters and >1 candidates
+        require(_candidates.length > 1 && _voters.length > 0, "candidate list and voter list both need to have non-zero length");
         
         name = _name;
         round = 1;
@@ -61,9 +64,22 @@ contract AnonymousElection {
         submittedPKs = 0;
         submittedVotes = 0;
         encryptedVotes = 1; // multiplicative identity since votes encrypted votes will be multiplied together
+        allPK = new uint256[](0);
+        
+        // set voter addresses to be allowed to vote
+        for (uint256 i = 0; i < _voters.length; i++) {
+            canVote[_voters[i]] = true;
+            voterToIndex[_voters[i]] = i;
+            allPK.push(0);
+        }
+        
+        allCandidateVotes = new uint256[](0);
+        for (uint256 i = 0; i < _candidates.length; i++) {
+            allCandidateVotes.push(0);
+        }
     }
     
-    // ""Right-to-left binary method" of modular power
+    // "Right-to-left binary method" of modular power
     function modPow(uint256 _base, uint256 _pow, uint256 _modulus) public pure returns (uint256) {
         if (_modulus == 1) {
             return 0;
@@ -85,6 +101,10 @@ contract AnonymousElection {
         return uint256(sha256(abi.encodePacked(g, _gv, _pk, _a)));
     }
     
+    function hasSubmittedPK(address _a) public view returns (bool) {
+        return voterPK[_a] != 0;
+    }
+    
     function submitPK(uint256 _pk, uint256 _gv, uint256 _r) public {
         // Ensure the following:
         //   the election is on round 1, which is the pk submitting round
@@ -102,17 +122,23 @@ contract AnonymousElection {
         //   Contract calculates whether g^(v) == g^(r)*(pk)^(sha256(g, g^v, pk, address))
         uint256 hash = calculatePKHash(_gv, _pk, msg.sender);
         uint256 potentialgv = mulmod(modPow(g, _r, p), modPow(_pk, hash, p), p);
-        require(_gv == potentialgv);
+        require(_gv == potentialgv, "PK proof does not work");
         
         // set relevant pk variables
         voterPK[msg.sender] = _pk; // map voter's address to their public key
         pkToVoter[_pk] = msg.sender; // map voter's pk to their address
+        allPK[voterToIndex[msg.sender]] = _pk; // put voter's pk in correct index in allPK array
         
         // increase submittedPKs and check if everyone has submitted their pk
         submittedPKs++;
         if (submittedPKs == voters.length) { // if everyone has submitted their pk
             round = 2; // set the round to 2, such that now voters can vote
         }
+    }
+    
+    function hasSubmittedVote(address _a) public view returns (bool) {
+        // need both, one to see if voter was registered, other to see if the voter can vote
+        return !(canVote[_a]) && voterPK[_a] != 0;
     }
     
     function vote(uint256 _encVote) public {
@@ -157,7 +183,15 @@ contract AnonymousElection {
             }
         }
         
+        allCandidateVotes = _candidateVotes;
+        
         // declare the winner
+        for (uint256 i = 0; i < _candidateVotes.length; i++) {
+            if (winnerVotes == _candidateVotes[i] && keccak256(abi.encodePacked(tempWinner)) != keccak256(abi.encodePacked(candidates[i]))) {
+                // THERE IS A TIE!
+                tempWinner = '';
+            }
+        }
         winner = tempWinner;
         
         // set round = 4 to indicate the election is over and winner has been declared
@@ -165,16 +199,34 @@ contract AnonymousElection {
     }
     
     
-    // return a tuple (really an array) that has the prime p and generator g
-    function getPG() public view returns (uint256[2] memory) {
-        uint256[2] memory pAndG = [p, g];
-        return pAndG;
+    // return prime p
+    function getP() public view returns (uint256) {
+        return p;
     }
     
+    // return generator g
+    function getG() public view returns (uint256) {
+        return g;
+    }
+    
+    // return generator g
+    function getM() public view returns (uint256) {
+        return m;
+    }
     
     // returns the array of potential candidates
     function getCandidates() public view returns (string[] memory) {
         return candidates;
+    }
+    
+    // returns the array of voters
+    function getVoters() public view returns (address[] memory) {
+        return voters;
+    }
+    
+    function getAllPK() public view returns (uint256[] memory) {
+        require(round >= 2, "not everyone has submitted their pk");
+        return allPK;
     }
     
     // return the integer value of what round the election is on
@@ -187,6 +239,18 @@ contract AnonymousElection {
         require(round == 4, "Election is still ongoing. Election needs to finish first");
         
         return candidateVotesMapping[_candidate];
+    }
+    
+    function getAllCandidateVotes() public view returns (uint256[] memory) {
+        // require that the votes have been tallied already, election is over
+        require(round == 4, "Election is still ongoing. Election needs to finish first");
+        
+        return allCandidateVotes;
+    }
+    
+    function getEncryptedVotes() public view returns (uint256) {
+        require(round >= 3, "Not everyone has voted yet");
+        return encryptedVotes;
     }
     
     function getWinner() public view returns (string memory) {

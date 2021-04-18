@@ -48,6 +48,18 @@ class TestBigNumbers {
         console.log('------------------------------------');
     }
 
+    async testSubtract() {
+        console.log('testing subtract');
+        let n1 = new BigInteger('2000');
+        let n2 = new BigInteger('50');
+        let n3 = new BigInteger('1950');
+        console.assert(n1.subtract(n2).equals(n3));
+
+
+        console.log('testSubtract complete');
+        console.log('------------------------------------');
+    }
+
     prepend0x(input) {
         let newInput = input;
         while(newInput.length < 512) {
@@ -104,6 +116,8 @@ class TestBigNumbers {
         console.log('testing');
         this.testNumberHandling();
         this.testAddition();
+
+        this.testSubtract();
 
         await this.testModPow();
     }

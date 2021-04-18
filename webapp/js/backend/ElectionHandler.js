@@ -19,6 +19,20 @@ class ElectionHandler {
         this.hasSubmittedVote = null;
         this.hasSubmittedPK = null;
     }
+    // jsbn.js doesn't like the 0x in front of hex, but the solidity library does
+    prepend0x(input) {
+        let newInput = input;
+        while(newInput.length < 512) {
+            newInput = '0' + newInput;
+        }
+        newInput = '0x' + newInput;
+        return newInput
+    }
+
+    // jsbn.js doesn't like the 0x in front of hex, but the solidity library does
+    remove0x(input) {
+        return input.slice(2);
+    }
 
     // Fast modular exponentiation for a ^ b mod n
     modPow(a, b, n) {
@@ -59,9 +73,16 @@ class ElectionHandler {
         this.candidates = await this.contract.methods.getCandidates().call({from: this.account});
         console.log(`Candidates: ${this.candidates}`);
         this.canIVote = await this.contract.methods.canIVote(this.account).call({from: this.account});
-        this.p = await this.contract.methods.getP().call({from: this.account});
-        this.g = await this.contract.methods.getG().call({from: this.account});
+
+        let pBytes = await this.contract.methods.getP().call({from: this.account});
+        this.p = new BigInteger(this.remove0x(pBytes), 16);
+
+        let gBytes = await this.contract.methods.getG().call({from: this.account});
+        this.g = new BigInteger(this.remove0x(gBytes), 16);
+
         this.m = await this.contract.methods.getM().call({from: this.account});
+        this.mBigNum = new BigInteger(this.m);
+
         this.hasSubmittedPK = await this.contract.methods.hasSubmittedPK(this.account).call({from: this.account});
         this.hasSubmittedVote = await this.contract.methods.hasSubmittedVote(this.account).call({from: this.account});
         console.log('connected');
@@ -81,46 +102,74 @@ class ElectionHandler {
         return this.candidates;
     }
 
-    getP() {
-        return this.p;
+    getPStr() {
+        return this.p.toString();
     }
 
-    getG() {
-        return this.g;
+    getGStr() {
+        return this.g.toString();
     }
 
     // used for when user already knows their secret on round > 1
     reestablishPK(secretX) {
-        this.secretX = secretX;
-        this.pk = this.modPow(this.g, this.secretX, this.p);
+        this.secretX = new BigInteger(secretX);
+        this.pk = this.g.modPow(this.secretX, this.p);
     }
 
     generatePK() {
-        this.secretX = Math.floor(Math.random() * ((this.p - 1) - 2) + 2);
-        this.pk = this.modPow(this.g, this.secretX, this.p);
+        
+        let pStr = this.p.toString();
+        let secretXStr = '';
+        for (let i = pStr.length - 1; i > 0; i--) {
+            if (i == pStr.length - 1) {
+                secretXStr += (Math.floor(Number(pStr[i]) * Math.random())).toString();
+            } else {
+                secretXStr += (Math.floor(10 * Math.random())).toString();
+            }
+        }
+        this.secretX = new BigInteger(secretXStr);
+        if (this.secretX.toString() == '0' || this.secretX.toString() == '1') {
+            this.secretX = new BigInteger('2');
+        }
+        this.pk = this.g.modPow(this.secretX, this.p);
 
-        return [this.secretX, this.pk];
+        return [this.secretX.toString(), this.pk.toString()];
     }
 
     async generateZKProofPK() {
         // setup proof of pk
         console.log('Setting up ZK proof for pk');
-        let v = Math.floor(Math.random() * ((this.p - 1) - 2) + 2);
-        this.gv = this.modPow(this.g, v, this.p);
+
+        let pStr = this.p.toString();
+        let vStr = '';
+        for (let i = pStr.length - 1; i > 0; i--) {
+            if (i == pStr.length - 1) {
+                vStr += (Math.floor(Number(pStr[i]) * Math.random())).toString();
+            } else {
+                vStr += (Math.floor(10 * Math.random())).toString();
+            }
+        }
+        if (this.secretX.toString() == '0' || this.secretX.toString() == '1') {
+            this.secretX = new BigInteger('2');
+        }
+
+        let v = new BigInteger(vStr);
+        this.gv = this.g.modPow(v, this.p);
         console.log('Getting z hash');
-        let z =  await this.contract.methods.calculatePKHash(this.gv, this.pk, this.account).call({from: this.account});
-        console.log(`z = ${z}`);
+        let zBytes =  await this.contract.methods.calculatePKHash(this.prepend0x(this.gv.toString(16)), this.prepend0x(this.pk.toString(16)), this.account).call({from: this.account});
+        let z = new BigInteger(this.remove0x(zBytes));
+        console.log(`z = ${z.toString()}`);
 
-        this.r = (v - ((this.secretX * z) % this.p)) % this.p;
+        this.r = v.subtract((this.secretx.multiply(z)));
 
-        console.log(`g^v=${this.gv}, r=${this.r}`)
+        console.log(`g^v=${this.gv.toString()}, r=${this.r.toString()}`)
 
         return [this.gv, this.r]
     }
 
     async submitPK() {
         console.log('Submitting pk');
-        let receipt = await this.contract.methods.submitPK(this.pk, this.gv, this.r).send({from: this.account});
+        let receipt = await this.contract.methods.submitPK(this.prepend0x(this.pk.toString(16)), this.prepend0x(this.gv.toString(16)), this.prepend0x(this.r.toString(16))).send({from: this.account});
         console.log('success?');
         console.log(receipt);
     }
@@ -131,24 +180,31 @@ class ElectionHandler {
         console.log(pks);
         let isInv = false;
 
-        let encVote = 1;
+        let encVote = new BigInteger('1');
         for (let i = 0; i < this.voters.length; i++) {
+            let otherPK = new BigInteger(this.remove0x(pks[i][0]));
             if (this.voters[i] == this.account) {
                 isInv = true;
                 continue;
             }
 
             if (isInv) {
-                encVote = (encVote * this.modInverse(pks[i], this.p)) % this.p;
+                encVote = encVote.multiply(otherPK.modInverse(this.p));
+                encVote = encVote.mod(this.p);
             } else {
-                encVote = (encVote * pks[i]) % this.p;
+                encVote = encVote.multiply(otherPK);
+                encVote = encVote.mod(this.p);
             }
         }
-
-        encVote = ((this.modPow(encVote, this.secretX, this.p) % this.p) * 
-                        (this.modPow(g, Math.pow(2, candidateIndex * this.m)) % this.p)) % this.p;
+        let actualVote = new BigInteger('2');
+        actualVote = actualVote.pow((new BigInteger((candidateIndex * this.m).toString())));
+        encVote = encVote.modPow(this.secretX, this.p);
+        encVote = encVote.multiply(this.g.modPow(actualVote));
+        encVote = encVote.mod(this.p);
         
-        receipt = await this.contract.methods.vote(encVote).send({from: this.account});
+        
+        receipt = await this.contract.methods.vote(this.prepend0x(encVote.toString(16))).send({from: this.account});
+        console.log(receipt);
     }
 
     checkSum(voteBreakup, encVotesVal) {

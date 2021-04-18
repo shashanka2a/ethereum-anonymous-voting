@@ -6,7 +6,10 @@ class ElectionCreatorHandler {
 
         // from https://tools.ietf.org/html/rfc3526#page-3
         // hex value of safe prime
-        this.pHex = 'FFFFFFFFFFFFFFFFC90FDAA22168C234C4C6628B80DC1CD129024E088A67CC74020BBEA63B139B22514A08798E3404DDEF9519B3CD3A431B302B0A6DF25F14374FE1356D6D51C245E485B576625E7EC6F44C42E9A637ED6B0BFF5CB6F406B7EDEE386BFB5A899FA5AE9F24117C4B1FE649286651ECE45B3DC2007CB8A163BF0598DA48361C55D39A69163FA8FD24CF5F83655D23DCA3AD961C62F356208552BB9ED529077096966D670C354E4ABC9804F1746C08CA18217C32905E462E36CE3BE39E772C180E86039B2783A2EC07A28FB5C55DF06F4C52C9DE2BCBF6955817183995497CEA956AE515D2261898FA051015728E5A8AACAA68FFFFFFFFFFFFFFFF';
+        this.pHex = 'ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aacaa68ffffffffffffffff';
+        this.gHex = '2';
+        this.pBigNum = new BigInteger(this.pHex, 16);
+        this.gBigNum = new BigInteger(this.gBigNum, 16);
         this.contract = null;
     }
 
@@ -18,15 +21,21 @@ class ElectionCreatorHandler {
         }
     }
 
+    prepend0x(input) {
+        let newInput = input;
+        while(newInput.length < 512) {
+            newInput = '0' + newInput;
+        }
+        newInput = '0x' + newInput;
+        return newInput
+    }
+
     async create(electionName, candidates, voters, account) {
         if (this.contract == null) {
             throw 'Contract yet connected';
         }
 
-        let p = 164987;
-        let g = 2;
-
-        let electionReceipt = await this.contract.methods.createElection(electionName, candidates, voters, p, g).send({from: account});
+        let electionReceipt = await this.contract.methods.createElection(electionName, candidates, voters, this.prepend0x(this.p), this.prepend0x(this.g)).send({from: account});
         console.log(electionReceipt);
         let electionAddress = await this.contract.methods.getElectionAddress(electionName).call({from: account});
         console.log(`Election address is ${electionAddress}`);
@@ -35,6 +44,6 @@ class ElectionCreatorHandler {
     }
 
     getPandG() {
-        return [164987, 2];
+        return [this.pBigNum.toString(), this.gBigNum.toString()];
     }
 }

@@ -14,7 +14,7 @@ contract AnonymousElectionCreator {
         electionsList = new string[](0);
     }
     
-    function createElection(string memory _electionName, string[] memory _candidates, address[] memory _voters, uint256 _p, uint256 _g) public returns(address) {
+    function createElection(string memory _electionName, string[] memory _candidates, address[] memory _voters, bytes memory _p, bytes memory _g) public returns(address) {
         // make sure that the _electionName is unique
         require(electionsMapping[_electionName] == address(0), "Election name not unique. An election already exists with that name");
         require(_candidates.length > 1 && _voters.length > 0, "candidate list and voter list both need to have non-zero length, >1 candidate");

@@ -4,7 +4,10 @@
 
 pragma solidity >=0.8.0 <0.9.0;
 
+import "./BigNumber.sol";
+
 contract AnonymousElection {
+    using BigNumber for *;
     string name;
     // sets the owner of the election to the one who deploys the smart contract
     address private owner;
@@ -27,23 +30,22 @@ contract AnonymousElection {
     uint256 private submittedVotes; // holds number of voters who have submitted their valid votes
     
     // cryptography related variables
-    uint256 private p; // prime
-    uint256 private g; // generator
-    mapping(address => uint256) private voterPK; // mapping of users to their public keys, in the form of g^(x) (mod p)
-    mapping(uint256 => address) private pkToVoter; // mapping of voter's private key to voter's address
-    uint256[] allPK; // array of all voter PK's corresponding to voters index
+    BigNumber.instance private p; // prime
+    BigNumber.instance private g; // generator
+    mapping(address => BigNumber.instance) private voterPK; // mapping of users to their public keys, in the form of g^(x) (mod p)
+    BigNumber.instance[] allPK; // array of all voter PK's corresponding to voters index
     
     uint256 private m; // 2^m > number of candidates, used for tallying votes
     
     // nubmer representing the multiplication of all votes input
     // by round 3, encryptedVotes = g^v where v = 2^(0)c_1 + 2^(1)c_2 + ... + 2^(n-1)c_n where c_i is the number of votes for candidate i
-    uint256 private encryptedVotes;
+    BigNumber.instance private encryptedVotes;
     mapping(string => uint256) private candidateVotesMapping; 
     uint256[] allCandidateVotes; // array of all the vote counts for each candidate
     
     
     
-    constructor(string[] memory _candidates, address[] memory _voters, uint256 _p, uint256 _g, address _owner, string memory _name) {
+    constructor(string[] memory _candidates, address[] memory _voters, bytes memory _p, bytes memory _g, address _owner, string memory _name) {
         // check to ensure that this election makes sense, has >0 voters and >1 candidates
         require(_candidates.length > 1 && _voters.length > 0, "candidate list and voter list both need to have non-zero length");
         
@@ -53,8 +55,8 @@ contract AnonymousElection {
         candidates = _candidates;
         voters = _voters;
         
-        p = _p;
-        g = _g;
+        p = BigNumber.instance(_p, false, 2048);
+        g = BigNumber.instance(_g, false, 2048);
         m = 0;
         
         while (2**m <= _voters.length){
@@ -63,18 +65,21 @@ contract AnonymousElection {
         
         submittedPKs = 0;
         submittedVotes = 0;
-        encryptedVotes = 1; // multiplicative identity since votes encrypted votes will be multiplied together
-        allPK = new uint256[](0);
+        encryptedVotes = BigNumber.instance("0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001", false, 2048); // multiplicative identity since votes encrypted votes will be multiplied together
+        allPK = new BigNumber.instance[](0);
+        
         
         // set voter addresses to be allowed to vote
         for (uint256 i = 0; i < _voters.length; i++) {
             canVote[_voters[i]] = true;
             voterToIndex[_voters[i]] = i;
-            allPK.push(0);
+            bytes memory zeroes = "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+            allPK.push(BigNumber.instance(zeroes, false, 2048));
         }
         
         allCandidateVotes = new uint256[](0);
         for (uint256 i = 0; i < _candidates.length; i++) {
+            //bytes memory zeroes = "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
             allCandidateVotes.push(0);
         }
     }
@@ -97,21 +102,20 @@ contract AnonymousElection {
     }
     
     // for the Zero-Knowledge proof in submitPK
-    function calculatePKHash(uint256 _gv, uint256 _pk, address _a) public view returns (uint256) {
-        return uint256(sha256(abi.encodePacked(g, _gv, _pk, _a)));
+    function calculatePKHash(bytes memory _gv, bytes memory _pk, address _a) public view returns (bytes memory) {
+        return abi.encodePacked((sha256(abi.encodePacked(g.val, _gv, _pk, _a))));
     }
     
     function hasSubmittedPK(address _a) public view returns (bool) {
-        return voterPK[_a] != 0;
+        return keccak256(abi.encodePacked(voterPK[_a].val)) != keccak256(abi.encodePacked(bytes("0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")));
     }
     
-    function submitPK(uint256 _pk, uint256 _gv, uint256 _r) public {
+    function submitPK(bytes memory _pk, bytes memory _gv, bytes memory _r) public {
         // Ensure the following:
         //   the election is on round 1, which is the pk submitting round
         //   the sender is a verified voter and they are allowed to vote
         //   the voter has not already submitted a public key
-        //   the voter is not submitting an already in-use pk
-        require (round == 1 && canVote[msg.sender] && voterPK[msg.sender] == 0 && pkToVoter[_pk] == address(0));
+        require (round == 1 && canVote[msg.sender] && !hasSubmittedPK(msg.sender));
         
         // Verify the Zero-Knowledge proof which ensures that the voter knows their secret x value, where pk = g^x mod p, without revealing it
         // Algorithm:
@@ -120,14 +124,23 @@ contract AnonymousElection {
         //   Voter calculates hash z = sha256(g, g^v, pk, address)
         //   Voter sends r = v - x*z
         //   Contract calculates whether g^(v) == g^(r)*(pk)^(sha256(g, g^v, pk, address))
-        uint256 hash = calculatePKHash(_gv, _pk, msg.sender);
-        uint256 potentialgv = mulmod(modPow(g, _r, p), modPow(_pk, hash, p), p);
-        require(_gv == potentialgv, "PK proof does not work");
+        //   t1 = g^(r) mod p
+        //   t2 = (pk)^(sha256(g, g^v, pk, address))
+        BigNumber.instance memory pk = BigNumber.instance(_pk, false, 2048);
+        BigNumber.instance memory gv = BigNumber.instance(_gv, false, 2048);
+        BigNumber.instance memory r = BigNumber.instance(_r, false, 2048);
+        BigNumber.instance memory t1 = g.prepare_modexp(r, p);
+        
+        BigNumber.instance memory hash = BigNumber.instance(calculatePKHash(_gv, _pk, msg.sender), false, 256);
+        BigNumber.instance memory t2 = pk.prepare_modexp(r, p);
+        
+        BigNumber.instance memory potentialgv = t1.modmul(t2, p);
+        
+        require(keccak256(abi.encodePacked(gv.val)) == keccak256(abi.encodePacked(potentialgv.val)), "PK proof does not work");
         
         // set relevant pk variables
-        voterPK[msg.sender] = _pk; // map voter's address to their public key
-        pkToVoter[_pk] = msg.sender; // map voter's pk to their address
-        allPK[voterToIndex[msg.sender]] = _pk; // put voter's pk in correct index in allPK array
+        voterPK[msg.sender] = pk; // map voter's address to their public key
+        allPK[voterToIndex[msg.sender]] = pk; // put voter's pk in correct index in allPK array
         
         // increase submittedPKs and check if everyone has submitted their pk
         submittedPKs++;
@@ -138,10 +151,10 @@ contract AnonymousElection {
     
     function hasSubmittedVote(address _a) public view returns (bool) {
         // need both, one to see if voter was registered, other to see if the voter can vote
-        return !(canVote[_a]) && voterPK[_a] != 0;
+        return !(canVote[_a]) && hasSubmittedPK(_a);
     }
     
-    function vote(uint256 _encVote) public {
+    function vote(bytes memory _encVote) public {
         require (round == 2 && canVote[msg.sender]);
         canVote[msg.sender] = false;
         
@@ -151,7 +164,8 @@ contract AnonymousElection {
         
         
         // multiply _encVote with encryptedVotes, thus adding their exponents
-        encryptedVotes = mulmod(encryptedVotes, _encVote, p);
+        BigNumber.instance memory encVote = BigNumber.instance(_encVote, false, 2048);
+        encryptedVotes = encryptedVotes.modmul(encVote, p);
         
         
         // increase submittedVotes and check if everyone has submitted their vote
@@ -166,11 +180,14 @@ contract AnonymousElection {
         
         uint256 v = 0;
         for (uint256 i = 0; i < _candidateVotes.length; i++) {
-            v = addmod(v, mulmod((2**(i*m)), _candidateVotes[i], p), p);
+            v = v + (((2**(i*m))) * _candidateVotes[i]);
         }
         
+        BigNumber.instance memory vBigNumber = BigNumber.instance(abi.encodePacked(v), false, 256);
+        BigNumber.instance memory potentialVotes = g.prepare_modexp(vBigNumber, p);
+        
         // check if this actually works
-        require(encryptedVotes == modPow(g, v, p), "encryptedVotes and inputted votes not matching");
+        require(keccak256(abi.encodePacked(encryptedVotes.val)) == keccak256(abi.encodePacked(potentialVotes.val)), "encryptedVotes and inputted votes not matching");
         
         // figure out the winner from the votes
         string memory tempWinner = '';
@@ -200,13 +217,13 @@ contract AnonymousElection {
     
     
     // return prime p
-    function getP() public view returns (uint256) {
-        return p;
+    function getP() public view returns (bytes memory) {
+        return p.val;
     }
     
     // return generator g
-    function getG() public view returns (uint256) {
-        return g;
+    function getG() public view returns (bytes memory) {
+        return g.val;
     }
     
     // return generator g
@@ -224,7 +241,7 @@ contract AnonymousElection {
         return voters;
     }
     
-    function getAllPK() public view returns (uint256[] memory) {
+    function getAllPK() public view returns (BigNumber.instance[] memory) {
         require(round >= 2, "not everyone has submitted their pk");
         return allPK;
     }
@@ -248,9 +265,9 @@ contract AnonymousElection {
         return allCandidateVotes;
     }
     
-    function getEncryptedVotes() public view returns (uint256) {
+    function getEncryptedVotes() public view returns (bytes memory) {
         require(round >= 3, "Not everyone has voted yet");
-        return encryptedVotes;
+        return encryptedVotes.val;
     }
     
     function getWinner() public view returns (string memory) {

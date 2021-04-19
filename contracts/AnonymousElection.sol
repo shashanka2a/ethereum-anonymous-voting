@@ -33,7 +33,7 @@ contract AnonymousElection {
     BigNumber.instance private p; // prime
     BigNumber.instance private g; // generator
     mapping(address => BigNumber.instance) private voterPK; // mapping of users to their public keys, in the form of g^(x) (mod p)
-    BigNumber.instance[] allPK; // array of all voter PK's corresponding to voters index
+    bytes[] allPKBytes; // array of all PKs corresponding to candidate index. In hex form
     
     uint256 private m; // 2^m > number of candidates, used for tallying votes
     
@@ -65,49 +65,35 @@ contract AnonymousElection {
         
         submittedPKs = 0;
         submittedVotes = 0;
-        encryptedVotes = BigNumber.instance("0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001", false, 2048); // multiplicative identity since votes encrypted votes will be multiplied together
-        allPK = new BigNumber.instance[](0);
+        encryptedVotes = BigNumber.instance(hex"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001", false, 2048); // multiplicative identity since votes encrypted votes will be multiplied together
+        // allPK = new BigNumber.instance[](0);
+        allPKBytes = new bytes[](0);
         
         
         // set voter addresses to be allowed to vote
         for (uint256 i = 0; i < _voters.length; i++) {
             canVote[_voters[i]] = true;
             voterToIndex[_voters[i]] = i;
-            bytes memory zeroes = "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
-            allPK.push(BigNumber.instance(zeroes, false, 2048));
+            bytes memory zeroes = hex"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+            // allPK.push(BigNumber.instance(zeroes, false, 2048));
+            allPKBytes.push(zeroes);
         }
         
         allCandidateVotes = new uint256[](0);
         for (uint256 i = 0; i < _candidates.length; i++) {
-            //bytes memory zeroes = "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
             allCandidateVotes.push(0);
         }
     }
     
-    // "Right-to-left binary method" of modular power
-    function modPow(uint256 _base, uint256 _pow, uint256 _modulus) public pure returns (uint256) {
-        if (_modulus == 1) {
-            return 0;
-        }
-        uint256 r = 1;
-        _base = _base % _modulus;
-        while (_pow > 0) {
-            if (_pow % 2 == 1) {
-                r = mulmod(r, _base, _modulus);
-            }
-            _pow = _pow >> 1;
-            _base = mulmod(_base, _base, _modulus);
-        }
-        return r;
-    }
-    
     // for the Zero-Knowledge proof in submitPK
+    // returns bytes2048
     function calculatePKHash(bytes memory _gv, bytes memory _pk, address _a) public view returns (bytes memory) {
-        return abi.encodePacked((sha256(abi.encodePacked(g.val, _gv, _pk, _a))));
+        bytes memory zeroes1792 = hex"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+        return abi.encodePacked(zeroes1792, bytes32(sha256(abi.encodePacked(g.val, _gv, _pk, _a))));
     }
     
     function hasSubmittedPK(address _a) public view returns (bool) {
-        return keccak256(abi.encodePacked(voterPK[_a].val)) != keccak256(abi.encodePacked(bytes("0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")));
+        return keccak256(abi.encodePacked(voterPK[_a].val)) != keccak256(abi.encodePacked(bytes(hex"00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000")));
     }
     
     function submitPK(bytes memory _pk, bytes memory _gv, bytes memory _r) public {
@@ -131,8 +117,8 @@ contract AnonymousElection {
         BigNumber.instance memory r = BigNumber.instance(_r, false, 2048);
         BigNumber.instance memory t1 = g.prepare_modexp(r, p);
         
-        BigNumber.instance memory hash = BigNumber.instance(calculatePKHash(_gv, _pk, msg.sender), false, 256);
-        BigNumber.instance memory t2 = pk.prepare_modexp(r, p);
+        BigNumber.instance memory hash = BigNumber.instance(calculatePKHash(_gv, _pk, msg.sender), false, 2048);
+        BigNumber.instance memory t2 = pk.prepare_modexp(hash, p);
         
         BigNumber.instance memory potentialgv = t1.modmul(t2, p);
         
@@ -140,7 +126,8 @@ contract AnonymousElection {
         
         // set relevant pk variables
         voterPK[msg.sender] = pk; // map voter's address to their public key
-        allPK[voterToIndex[msg.sender]] = pk; // put voter's pk in correct index in allPK array
+        // allPK[voterToIndex[msg.sender]] = pk; // put voter's pk in correct index in allPK array
+        allPKBytes[voterToIndex[msg.sender]] = pk.val;
         
         // increase submittedPKs and check if everyone has submitted their pk
         submittedPKs++;
@@ -183,7 +170,10 @@ contract AnonymousElection {
             v = v + (((2**(i*m))) * _candidateVotes[i]);
         }
         
-        BigNumber.instance memory vBigNumber = BigNumber.instance(abi.encodePacked(v), false, 256);
+        bytes memory zeroes1792 = hex"0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+
+        
+        BigNumber.instance memory vBigNumber = BigNumber.instance(abi.encodePacked(zeroes1792, bytes32(v)), false, 2048);
         BigNumber.instance memory potentialVotes = g.prepare_modexp(vBigNumber, p);
         
         // check if this actually works
@@ -241,9 +231,9 @@ contract AnonymousElection {
         return voters;
     }
     
-    function getAllPK() public view returns (BigNumber.instance[] memory) {
+    function getAllPK() public view returns (bytes[] memory) {
         require(round >= 2, "not everyone has submitted their pk");
-        return allPK;
+        return allPKBytes;
     }
     
     // return the integer value of what round the election is on

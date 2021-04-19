@@ -81,7 +81,7 @@ class ElectionHandler {
         this.g = new BigInteger(this.remove0x(gBytes), 16);
 
         this.m = await this.contract.methods.getM().call({from: this.account});
-        this.mBigNum = new BigInteger(this.m);
+        this.mBigNum = new BigInteger(this.m.toString());
 
         this.hasSubmittedPK = await this.contract.methods.hasSubmittedPK(this.account).call({from: this.account});
         this.hasSubmittedVote = await this.contract.methods.hasSubmittedVote(this.account).call({from: this.account});
@@ -157,7 +157,7 @@ class ElectionHandler {
         this.gv = this.g.modPow(v, this.p);
         console.log('Getting z hash');
         let zBytes =  await this.contract.methods.calculatePKHash(this.prepend0x(this.gv.toString(16)), this.prepend0x(this.pk.toString(16)), this.account).call({from: this.account});
-        let z = new BigInteger(this.remove0x(zBytes));
+        let z = new BigInteger(this.remove0x(zBytes), 16);
         console.log(`z = ${z.toString()}`);
 
         this.r = v.subtract((this.secretx.multiply(z)));
@@ -208,17 +208,21 @@ class ElectionHandler {
     }
 
     checkSum(voteBreakup, encVotesVal) {
-        let potentialSum = 0;
+        let gBig = new BigInteger(this.g);
+        let potentialSum = new BigInteger('0');
         for (let i = 0; i < voteBreakup.length; i++) {
-            potentialSum += voteBreakup[i] * (Math.pow(2, i*this.m));
+            let twoToM = new BigInteger('2');
+            twoToM = twoToM.pow(new BigInteger((i*this.m).toString()));
+            potentialSum = potentialSum.add(BigInteger(voteBreakup[i]).multiply(twoToM));
         }
-        return potentialSum == encVotesVal;
+        return encVotesVal.equals(gBig.modPow(potentialSum, this.p));
     }
 
     async determineElectionWinner() {
         console.log(`Getting all encrypted votes`);
-        let encVotesVal = await this.contract.methods.getEncryptedVotes().call({from: this.account});
-        console.log(`Encrypted votes: ${encVotesVal}`);
+        let encVotesValBytes = await this.contract.methods.getEncryptedVotes().call({from: this.account});
+        let encVotesVal = new BigInteger(this.remove0x(encVotesValBytes), 16);
+        console.log(`Encrypted votes: ${encVotesVal.toString()}`);
 
         let numVotes = this.voters.length;
 

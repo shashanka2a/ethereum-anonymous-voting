@@ -132,4 +132,8 @@ class UI {
         document.getElementById('winner').innerHTML = ((winner == '') ? 'There is a tie' : winner);
         this.showElem(this.round4Div);
     }
+
+    setCanVoteStatus(canVoteStatus, reason="") {
+        document.getElementById('can-vote-status').innerHTML = (canVoteStatus) ? `You can vote` : `You cannot currently vote. ${reason}`;
+    }
 }

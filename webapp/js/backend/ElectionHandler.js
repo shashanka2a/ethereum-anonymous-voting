@@ -4,7 +4,7 @@ class ElectionHandler {
         this.account = account;
         this.web3 = web3;
         this.address = address;
-        this.abi = JSON.parse('[{"inputs":[{"internalType":"string[]","name":"_candidates","type":"string[]"},{"internalType":"address[]","name":"_voters","type":"address[]"},{"internalType":"uint256","name":"_p","type":"uint256"},{"internalType":"uint256","name":"_g","type":"uint256"},{"internalType":"address","name":"_owner","type":"address"},{"internalType":"string","name":"_name","type":"string"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"uint256","name":"_gv","type":"uint256"},{"internalType":"uint256","name":"_pk","type":"uint256"},{"internalType":"address","name":"_a","type":"address"}],"name":"calculatePKHash","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_a","type":"address"}],"name":"canIVote","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getAllCandidateVotes","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getAllPK","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"_candidate","type":"string"}],"name":"getCandidateVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getCandidates","outputs":[{"internalType":"string[]","name":"","type":"string[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getEncryptedVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getG","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getM","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getP","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getRound","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getVoters","outputs":[{"internalType":"address[]","name":"","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getWinner","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_a","type":"address"}],"name":"hasSubmittedPK","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_a","type":"address"}],"name":"hasSubmittedVote","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_base","type":"uint256"},{"internalType":"uint256","name":"_pow","type":"uint256"},{"internalType":"uint256","name":"_modulus","type":"uint256"}],"name":"modPow","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"pure","type":"function"},{"inputs":[{"internalType":"uint256[]","name":"_candidateVotes","type":"uint256[]"}],"name":"proveWinner","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_pk","type":"uint256"},{"internalType":"uint256","name":"_gv","type":"uint256"},{"internalType":"uint256","name":"_r","type":"uint256"}],"name":"submitPK","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"uint256","name":"_encVote","type":"uint256"}],"name":"vote","outputs":[],"stateMutability":"nonpayable","type":"function"}]');
+        this.abi = JSON.parse('[{"inputs":[{"internalType":"string[]","name":"_candidates","type":"string[]"},{"internalType":"address[]","name":"_voters","type":"address[]"},{"internalType":"bytes","name":"_p","type":"bytes"},{"internalType":"bytes","name":"_g","type":"bytes"},{"internalType":"address","name":"_owner","type":"address"},{"internalType":"string","name":"_name","type":"string"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"bytes","name":"_gv","type":"bytes"},{"internalType":"bytes","name":"_pk","type":"bytes"},{"internalType":"address","name":"_a","type":"address"}],"name":"calculatePKHash","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_a","type":"address"}],"name":"canIVote","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getAllCandidateVotes","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getAllPK","outputs":[{"internalType":"bytes[]","name":"","type":"bytes[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"_candidate","type":"string"}],"name":"getCandidateVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getCandidates","outputs":[{"internalType":"string[]","name":"","type":"string[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getEncryptedVotes","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getG","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getM","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getP","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getRound","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getVoters","outputs":[{"internalType":"address[]","name":"","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getWinner","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_a","type":"address"}],"name":"hasSubmittedPK","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_a","type":"address"}],"name":"hasSubmittedVote","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256[]","name":"_candidateVotes","type":"uint256[]"}],"name":"proveWinner","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes","name":"_pk","type":"bytes"},{"internalType":"bytes","name":"_gv","type":"bytes"},{"internalType":"bytes","name":"_r","type":"bytes"}],"name":"submitPK","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes","name":"_encVote","type":"bytes"}],"name":"vote","outputs":[],"stateMutability":"nonpayable","type":"function"}]');
 
         this.contract = null;
         this.candidates = [];
@@ -71,20 +71,26 @@ class ElectionHandler {
         this.round = await this.contract.methods.getRound().call({from: this.account});
         console.log(`Election Round: ${this.round}`);
         this.candidates = await this.contract.methods.getCandidates().call({from: this.account});
-        console.log(`Candidates: ${this.candidates}`);
+        console.log(`Election Candidates: ${this.candidates}`);
         this.canIVote = await this.contract.methods.canIVote(this.account).call({from: this.account});
+        console.log(`Can I vote: ${this.canIVote}`);
 
         let pBytes = await this.contract.methods.getP().call({from: this.account});
         this.p = new BigInteger(this.remove0x(pBytes), 16);
+        console.log(`Election prime p: ${this.p.toString()}`);
 
         let gBytes = await this.contract.methods.getG().call({from: this.account});
         this.g = new BigInteger(this.remove0x(gBytes), 16);
+        console.log(`Election generator g: ${this.g.toString()}`);
 
         this.m = await this.contract.methods.getM().call({from: this.account});
         this.mBigNum = new BigInteger(this.m.toString());
+        console.log(`Election m: ${this.m.toString()}`);
 
         this.hasSubmittedPK = await this.contract.methods.hasSubmittedPK(this.account).call({from: this.account});
+        console.log(`Have I submitted by pk: ${this.hasSubmittedPK}`);
         this.hasSubmittedVote = await this.contract.methods.hasSubmittedVote(this.account).call({from: this.account});
+        console.log(`Have I submitted my vote: ${this.hasSubmittedVote}`);
         console.log('connected');
     }
 
@@ -112,20 +118,16 @@ class ElectionHandler {
 
     // used for when user already knows their secret on round > 1
     reestablishPK(secretX) {
-        this.secretX = new BigInteger(secretX);
+        this.secretX = new BigInteger(secretX.toString());
         this.pk = this.g.modPow(this.secretX, this.p);
     }
 
     generatePK() {
-        
+        console.log('generating pk for first time');
         let pStr = this.p.toString();
         let secretXStr = '';
-        for (let i = pStr.length - 1; i > 0; i--) {
-            if (i == pStr.length - 1) {
-                secretXStr += (Math.floor(Number(pStr[i]) * Math.random())).toString();
-            } else {
-                secretXStr += (Math.floor(10 * Math.random())).toString();
-            }
+        for (let i = pStr.length - 200; i > 0; i--) {
+            secretXStr = secretXStr + (Math.floor(10 * Math.random())).toString();
         }
         this.secretX = new BigInteger(secretXStr);
         if (this.secretX.toString() == '0' || this.secretX.toString() == '1') {
@@ -142,25 +144,24 @@ class ElectionHandler {
 
         let pStr = this.p.toString();
         let vStr = '';
-        for (let i = pStr.length - 1; i > 0; i--) {
-            if (i == pStr.length - 1) {
-                vStr += (Math.floor(Number(pStr[i]) * Math.random())).toString();
-            } else {
-                vStr += (Math.floor(10 * Math.random())).toString();
-            }
+        for (let i = pStr.length - 4; i > 0; i--) {
+            vStr = vStr + (Math.floor(10 * Math.random())).toString();
         }
-        if (this.secretX.toString() == '0' || this.secretX.toString() == '1') {
-            this.secretX = new BigInteger('2');
+        if (vStr.toString() == '0' || vStr.toString() == '1') {
+            vStr = new BigInteger('2');
         }
 
         let v = new BigInteger(vStr);
+        while(v.toString().length < this.secretX.toString().length) {
+            v = v.multiply(new BigInteger('100000000000000000000000000000000000000000000000000000000000000000000000000'));
+        }
         this.gv = this.g.modPow(v, this.p);
         console.log('Getting z hash');
         let zBytes =  await this.contract.methods.calculatePKHash(this.prepend0x(this.gv.toString(16)), this.prepend0x(this.pk.toString(16)), this.account).call({from: this.account});
         let z = new BigInteger(this.remove0x(zBytes), 16);
         console.log(`z = ${z.toString()}`);
 
-        this.r = v.subtract((this.secretx.multiply(z)));
+        this.r = v.subtract((this.secretX.multiply(z)));
 
         console.log(`g^v=${this.gv.toString()}, r=${this.r.toString()}`)
 
@@ -169,6 +170,9 @@ class ElectionHandler {
 
     async submitPK() {
         console.log('Submitting pk');
+        console.log(this.prepend0x(this.pk.toString(16)));
+        console.log(this.prepend0x(this.gv.toString(16)));
+        console.log(this.prepend0x(this.r.toString(16)));
         let receipt = await this.contract.methods.submitPK(this.prepend0x(this.pk.toString(16)), this.prepend0x(this.gv.toString(16)), this.prepend0x(this.r.toString(16))).send({from: this.account});
         console.log('success?');
         console.log(receipt);
@@ -182,7 +186,7 @@ class ElectionHandler {
 
         let encVote = new BigInteger('1');
         for (let i = 0; i < this.voters.length; i++) {
-            let otherPK = new BigInteger(this.remove0x(pks[i][0]));
+            let otherPK = new BigInteger(this.remove0x(pks[i][0]), 16);
             if (this.voters[i] == this.account) {
                 isInv = true;
                 continue;
@@ -199,7 +203,7 @@ class ElectionHandler {
         let actualVote = new BigInteger('2');
         actualVote = actualVote.pow((new BigInteger((candidateIndex * this.m).toString())));
         encVote = encVote.modPow(this.secretX, this.p);
-        encVote = encVote.multiply(this.g.modPow(actualVote));
+        encVote = encVote.multiply(this.g.modPow(actualVote, this.p));
         encVote = encVote.mod(this.p);
         
         
@@ -208,12 +212,13 @@ class ElectionHandler {
     }
 
     checkSum(voteBreakup, encVotesVal) {
-        let gBig = new BigInteger(this.g);
+        let gBig = this.g;
         let potentialSum = new BigInteger('0');
         for (let i = 0; i < voteBreakup.length; i++) {
             let twoToM = new BigInteger('2');
             twoToM = twoToM.pow(new BigInteger((i*this.m).toString()));
-            potentialSum = potentialSum.add(BigInteger(voteBreakup[i]).multiply(twoToM));
+            let voteBN = new BigInteger(voteBreakup[i].toString());
+            potentialSum = potentialSum.add((voteBN.multiply(twoToM)));
         }
         return encVotesVal.equals(gBig.modPow(potentialSum, this.p));
     }

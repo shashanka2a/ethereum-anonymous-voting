@@ -19,3 +19,8 @@
     display: none;
 }
 
+
+.no-overflow {
+    display: inline-block;
+    word-wrap: break-word;
+}

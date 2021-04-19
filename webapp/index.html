@@ -15,9 +15,9 @@
     <!-- Milligram CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/milligram/1.4.1/milligram.css">
 
-    <link rel="stylesheet" href="css/main.css">
-
     <link rel="stylesheet" href="css/spinner/css-loader.css">
+
+    <link rel="stylesheet" href="css/main.css">
 
     <script src='js/bignumber.min.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.3.4/web3.min.js"
@@ -36,6 +36,7 @@
         <button onclick="testBigNumbers.test()">Test BigNumbers</button>
         <div id="account-div">
             <h5 id="connected-account-header"></h5>
+            <div id="can-vote-status"></div>
         </div>
 
         <div id="election-address-div">
@@ -52,7 +53,7 @@
         <!--  -->
         <div id="election-connection-div" class="invisible">
             <h3>Enter Election Address</h3>
-            <sub>0xbE81FD62f625C394BD4065093285c1818749f1fa</sub>
+            <sub>0x9c7c23CB42060D26434D1C3dDB7237452F934B00</sub>
             <input id="contract-address-input" placeholder="Election Address">
             <button onclick="app.connectContract()">Connect to Election</button>
             <hr>
@@ -60,11 +61,11 @@
 
         <div id="round1-div" class="invisible">
             <h3>Setup Your Public Key Encryption</h3>
-            <div>Prime <sub lang="latex"> ( p ) </sub>: <b><span id="p"></span></b></div>
+            <div>Prime <sub lang="latex"> ( p ) </sub>: <b><span id="p" class="no-overflow"></span></b></div>
             <div>Generator <sub lang="latex"> ( g ) </sub>: <b><span id="g"></span></b></div>
-            <div>Your Secret &nbsp; <sub lang="latex"> ( x \in_{R} \mathbb{Z}_{p} )</sub> : <b><span id="secret-x">Not
+            <div>Your Secret &nbsp; <sub lang="latex"> ( x \in_{R} \mathbb{Z}_{p} )</sub> : <b><span id="secret-x" class="no-overflow">Not
                         Setup</span></b></div>
-            <div>Your Public Key &nbsp; <sub lang="latex"> ( g^{x}\mod{p} ) </sub>: <b><span id="pk">Not
+            <div>Your Public Key &nbsp; <sub lang="latex"> ( g^{x}\mod{p} ) </sub>: <b><span id="pk" class="no-overflow">Not
                         Setup</span></b></div>
             <div id='reestablish-secret-div'>Enter your previously assigned secret x value: <input id='secret-x-input'></div>
             <button id='round1-button' onclick="app.setupPK()">Setup</button>

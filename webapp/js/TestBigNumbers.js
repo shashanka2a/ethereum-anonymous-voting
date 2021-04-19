@@ -6,7 +6,9 @@
 
 class TestBigNumbers {
     constructor() {
-        this.abi1 = JSON.parse('[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"bytes","name":"a_val","type":"bytes"},{"internalType":"bytes","name":"b_val","type":"bytes"},{"internalType":"bytes","name":"mod_val","type":"bytes"}],"name":"mock_modexp","outputs":[{"internalType":"bytes","name":"","type":"bytes"},{"internalType":"bool","name":"","type":"bool"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_u","type":"uint256"},{"internalType":"bytes","name":"_bn","type":"bytes"}],"name":"uintsAndBigNumbers","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"}]');
+        this.abi1 = JSON.parse('[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"bytes","name":"a_val","type":"bytes"},{"internalType":"bytes","name":"b_val","type":"bytes"},{"internalType":"bytes","name":"mod_val","type":"bytes"}],"name":"mock_modexp","outputs":[{"internalType":"bytes","name":"","type":"bytes"},{"internalType":"bool","name":"","type":"bool"},{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes","name":"_a","type":"bytes"},{"internalType":"bytes","name":"_b","type":"bytes"}],"name":"multiplication","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256","name":"_u","type":"uint256"},{"internalType":"bytes","name":"_bn","type":"bytes"}],"name":"uintsAndBigNumbers","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"}]');
+
+        this.abi2 = JSON.parse('[{"inputs":[],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"bytes","name":"_base","type":"bytes"},{"internalType":"bytes","name":"_exp","type":"bytes"},{"internalType":"bytes","name":"_mod","type":"bytes"}],"name":"doModExp","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes","name":"_a","type":"bytes"},{"internalType":"bytes","name":"_b","type":"bytes"},{"internalType":"bytes","name":"_mod","type":"bytes"}],"name":"doMulMod","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes","name":"_pk","type":"bytes"},{"internalType":"bytes","name":"_gv","type":"bytes"},{"internalType":"bytes","name":"_r","type":"bytes"},{"internalType":"bytes","name":"_g","type":"bytes"},{"internalType":"bytes","name":"_p","type":"bytes"},{"internalType":"bytes","name":"_hash","type":"bytes"}],"name":"shorrsZKProof","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"}]');
         this.web3 = new Web3(Web3.givenProvider || "ws://localhost:8545");
     }
 
@@ -130,18 +132,60 @@ class TestBigNumbers {
     }
 
 
+    async testPrivateVariables() {
+        // console.log('testing private variables');
+        // // let result1 = await this.contract1.methods.testString.call().call();
+        // console.log(result1);
+        // console.log('testPrivateVariables complete');
+        // console.log('------------------------------------');
+    }
+
+    async test2() {
+        console.log(`starting test 2`);
+        let n1 = new BigInteger('7895794327498327489272398471321124214214124');
+        let n2 = new BigInteger('48327943278942397489327948327894237984');
+        let n3 = new BigInteger('7238979283234324324324324323432525233331');
+        let result = await this.contract2.methods.doModExp(this.prepend0x(n1.toString(16)), this.prepend0x(n2.toString(16)), this.prepend0x(n3.toString(16))).call({from: this.account});
+        console.log(result);
+        let n4 = new BigInteger(this.remove0x(result), 16);
+        console.log(n4.toString());
+
+        console.log('test2 complete');
+        console.log('------------------------------------');
+    }
+
+    async testMultiplication() {
+        console.log('Test multiplication');
+        let n1 = new BigInteger('123456789');
+        let n2 = new BigInteger('1000');
+        let n3 = new BigInteger('123456789000');
+        let n4Bytes = this.contract1.methods.multiplication(this.prepend0x(n1.toString(16)), this.prepend0x(n2.toString(16))).call({from: this.account});
+        let n4 = new BigInteger(this.remove0x(n4Bytes), 16);
+        console.log(n4);
+        console.assert(n3.equals(n4));
+
+        console.log('test multiplication is done');
+        console.log('------------------------------------');
+    }
+
     async test() {
         let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         this.account = accounts[0];
-        this.contract1 = await new this.web3.eth.Contract(this.abi1, '0xE0F167e831BB23591210bb0EDe0b377C202425d2');
+        this.contract1 = await new this.web3.eth.Contract(this.abi1, '0x95635fD6752Fe1Bf5Ef415fE4A7cEA1651D97f53');
+        this.contract2 = await new this.web3.eth.Contract(this.abi2, '0x1C818BafDD186B875aF123059eFD51Af36CfFe60');
 
         console.log('testing');
         this.testNumberHandling();
         this.testAddition();
 
+        await this.testMultiplication();
+
         this.testSubtract();
+        await this.test2();
         await this.test1();
         await this.testModPow();
+
+        await this.testPrivateVariables();
     }
 }
 

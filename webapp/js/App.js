@@ -32,7 +32,7 @@ class App {
             this.ui.displayCandidates(this.electionHandler.getCandidates(), false);
             console.log(`initialized round 1`);
         } else if (round == 2) {
-            this.ui.setupRound1(this.electionHandler.getPStr(), this.electionHandler.getGStr(), true);
+            this.ui.setupRound1(this.electionHandler.getPStr(), this.electionHandler.getGStr(), false);
         } else if (round == 3) {
             this.ui.setupRound3();
         } else if (round == 4) {
@@ -46,25 +46,30 @@ class App {
         let canIVote = await this.electionHandler.canVote();
         if (canIVote) {
             this.ui.displayCandidates(this.electionHandler.candidates, true);
+            this.ui.setCanVoteStatus(true);
+        } else {
+            this.ui.setCanVoteStatus(false);
         }
     }
 
     async setupPK() {
+        console.log('setting up pk');
         this.ui.startSpinner();
+        console.log(this.electionHandler.hasSubmittedPK);
         if (this.electionHandler.hasSubmittedPK) {
-            let x = Number(this.ui.getSecretXInput());
+            let x = this.ui.getSecretXInput();
             this.electionHandler.reestablishPK(x);
             this.ui.round1Update(x, this.electionHandler.pk);
         } else {
+            console.log('hello???');
             let [x, pk] = this.electionHandler.generatePK();
             let [gv, r] = await this.electionHandler.generateZKProofPK();
             let receipt = await this.electionHandler.submitPK();
-            let round = this.electionHandler.getRound();
-            if (round == 2) {
-                await this.switchToVoting();
-            } else {
-                this.ui.round1Update(x, this.electionHandler.pk);
-            }
+            this.ui.round1Update(x, this.electionHandler.pk);
+        }
+        let round = await this.electionHandler.getRound();
+        if (round == 2) {
+            await this.switchToVoting();
         }
         this.ui.stopSpinner();
     }
@@ -80,6 +85,22 @@ class App {
         let winner = await this.electionHandler.getWinner();
         this.ui.setupFinishedState(winner);
         this.ui.displayCandidates(candidates, false, finalVotes, winner);
+    }
+
+    async vote(candidateIndex) {
+        this.ui.startSpinner();
+        let result = await this.electionHandler.vote(candidateIndex);
+
+        let round = await this.electionHandler.getRound();
+        if (round == 3) {
+            this.ui.setupRound3();
+            this.ui.displayCandidates(candidates);
+        } else if (round == 4) {
+            this.doFinishedState();
+        } else {
+            this.ui.displayCandidates(candidates);
+        }
+        this.ui.stopSpinner();
     }
 }
 

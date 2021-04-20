@@ -33,9 +33,12 @@ class App {
             console.log(`initialized round 1`);
         } else if (round == 2) {
             this.ui.setupRound1(this.electionHandler.getPStr(), this.electionHandler.getGStr(), false);
+            this.ui.displayCandidates(this.electionHandler.getCandidates(), false);
         } else if (round == 3) {
             this.ui.setupRound3();
+            this.ui.displayCandidates(this.electionHandler.getCandidates(), false);
         } else if (round == 4) {
+            this.ui.displayCandidates(this.electionHandler.candidates, false);
             await this.doFinishedState();
         }
 
@@ -49,6 +52,7 @@ class App {
             this.ui.setCanVoteStatus(true);
         } else {
             this.ui.setCanVoteStatus(false);
+            this.ui.displayCandidates(this.electionHandler.candidates, false);
         }
     }
 
@@ -70,6 +74,8 @@ class App {
         let round = await this.electionHandler.getRound();
         if (round == 2) {
             await this.switchToVoting();
+        } else {
+            this.ui.displayCandidates(this.electionHandler.candidates, false);
         }
         this.ui.stopSpinner();
     }
@@ -94,11 +100,11 @@ class App {
         let round = await this.electionHandler.getRound();
         if (round == 3) {
             this.ui.setupRound3();
-            this.ui.displayCandidates(candidates);
+            this.ui.displayCandidates(this.electionHandler.getCandidates());
         } else if (round == 4) {
             this.doFinishedState();
         } else {
-            this.ui.displayCandidates(candidates);
+            this.ui.displayCandidates(this.electionHandler.getCandidates());
         }
         this.ui.stopSpinner();
     }

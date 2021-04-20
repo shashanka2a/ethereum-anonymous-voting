@@ -168,24 +168,126 @@ class TestBigNumbers {
         console.log('------------------------------------');
     }
 
+    testVoteMath() {
+        console.log('Testing voteMath');
+        let p = new BigInteger('47');
+        let g = new BigInteger('3');
+
+        let x1 = new BigInteger('31');
+        let pk1 = g.modPow(x1, p);
+        console.assert((new BigInteger('28')).equals(pk1));
+        let pk1Inverse = pk1.modInverse(p);
+        console.assert((new BigInteger('42')).equals(pk1Inverse));
+
+        let x2 = new BigInteger('14');
+        let pk2 = g.modPow(x2, p);
+        console.assert((new BigInteger('14')).equals(pk2));
+        let pk2Inverse = pk2.modInverse(p);
+        console.assert((new BigInteger('37')).equals(pk2Inverse));
+
+        let x3 = new BigInteger('21');
+        let pk3 = g.modPow(x3, p);
+        console.assert((new BigInteger('21')).equals(pk3));
+        let pk3Inverse = pk3.modInverse(p);
+        console.assert((new BigInteger('9')).equals(pk3Inverse));
+
+        let gy1 = (pk2Inverse.multiply(pk3Inverse)).mod(p);
+        console.assert((new BigInteger('4')).equals(gy1));
+        let vote1 = gy1.modPow(x1, p);
+        console.assert((new BigInteger('18')).equals(vote1));
+
+        let gy2 = (pk1.multiply(pk3Inverse)).mod(p);
+        console.assert((new BigInteger('17')).equals(gy2));
+        let vote2 = gy2.modPow(x2, p);
+        console.assert((new BigInteger('9')).equals(vote2));
+
+        let gy3 = (pk1.multiply(pk2)).mod(p);
+        console.assert((new BigInteger('16')).equals(gy3));
+        let vote3 = gy3.modPow(x3, p);
+        console.assert((new BigInteger('9')).equals(vote3));
+
+        let multipliedVotes = new BigInteger('1');
+        multipliedVotes = (multipliedVotes.multiply(vote1)).mod(p);
+        multipliedVotes = (multipliedVotes.multiply(vote2)).mod(p);
+        multipliedVotes = (multipliedVotes.multiply(vote3)).mod(p);
+        console.assert((new BigInteger('1')).equals(multipliedVotes));
+
+
+
+        
+        p = new BigInteger('47');
+        g = new BigInteger('2');
+
+        x1 = new BigInteger('31');
+        pk1 = g.modPow(x1, p);
+        pk1Inverse = pk1.modInverse(p);
+
+        x2 = new BigInteger('14');
+        pk2 = g.modPow(x2, p);
+        pk2Inverse = pk2.modInverse(p);
+
+        x3 = new BigInteger('21');
+        pk3 = g.modPow(x3, p);
+        pk3Inverse = pk3.modInverse(p);
+
+        gy1 = (pk2Inverse.multiply(pk3Inverse)).mod(p);
+        vote1 = gy1.modPow(x1, p);
+
+        gy2 = (pk1.multiply(pk3Inverse)).mod(p);
+        vote2 = gy2.modPow(x2, p);
+
+        gy3 = (pk1.multiply(pk2)).mod(p);
+        vote3 = gy3.modPow(x3, p);
+
+        multipliedVotes = new BigInteger('1');
+        multipliedVotes = (multipliedVotes.multiply(vote1)).mod(p);
+        multipliedVotes = (multipliedVotes.multiply(vote2)).mod(p);
+        multipliedVotes = (multipliedVotes.multiply(vote3)).mod(p);
+        console.assert((new BigInteger('1')).equals(multipliedVotes));
+
+
+
+        p = new BigInteger('ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aacaa68ffffffffffffffff', 16);
+        g = new BigInteger('2');
+
+        x1 = new BigInteger('ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aacaa68fffffffffff', 16);
+        pk1 = g.modPow(x1, p);
+        pk1Inverse = pk1.modInverse(p);
+
+        x2 = new BigInteger('ffffffffffffffffc90fdaa22168c234c4c6628b80dc1cd129024e088a67cc74020bbea63b139b22514a08798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7edee386bfb5a899fa5ae9f24117c4b1fe649286651ece45b3dc2007cb8a163bf0598da48361c55d39a69163fa8fd24cf5f83655d23dca3ad961c62f356208552bb9ed529077096966d670c354e4abc9804f1746c08ca18217c32905e462e36ce3be39e772c180e86039b2783a2ec07a28fb5c55df06f4c52c9de2bcbf6955817183995497cea956ae515d2261898fa051015728e5a8aacaa68fffffffffff', 16);
+        pk2 = g.modPow(x2, p);
+        pk2Inverse = pk2.modInverse(p);
+
+        x3 = new BigInteger('ffffffffffffffffc90fdaa22168c1cd1290288a67cc74020bbea63b139b22514a084e0798e3404ddef9519b3cd3a431b302b0a6df25f14374fe1356d6d51c245e485b576625e7ec6f44c42e9a637ed6b0bff5cb6f406b7e234c4c6628b80dcdee386bfb5a899fa5ae9f24117c4b1fe649', 16);
+        pk3 = g.modPow(x3, p);
+        pk3Inverse = pk3.modInverse(p);
+
+        gy1 = (pk2Inverse.multiply(pk3Inverse)).mod(p);
+        vote1 = gy1.modPow(x1, p);
+
+        gy2 = (pk1.multiply(pk3Inverse)).mod(p);
+        vote2 = gy2.modPow(x2, p);
+
+        gy3 = (pk1.multiply(pk2)).mod(p);
+        vote3 = gy3.modPow(x3, p);
+
+        multipliedVotes = new BigInteger('1');
+        multipliedVotes = (multipliedVotes.multiply(vote1)).mod(p);
+        multipliedVotes = (multipliedVotes.multiply(vote2)).mod(p);
+        multipliedVotes = (multipliedVotes.multiply(vote3)).mod(p);
+        console.assert((new BigInteger('1')).equals(multipliedVotes));
+
+
+        console.log('Done testing votemath');
+    }
+
     async test() {
         let accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
         this.account = accounts[0];
         this.contract1 = await new this.web3.eth.Contract(this.abi1, '0x95635fD6752Fe1Bf5Ef415fE4A7cEA1651D97f53');
         this.contract2 = await new this.web3.eth.Contract(this.abi2, '0x1C818BafDD186B875aF123059eFD51Af36CfFe60');
 
-        console.log('testing');
-        this.testNumberHandling();
-        this.testAddition();
-
-        await this.testMultiplication();
-
-        this.testSubtract();
-        await this.test2();
-        await this.test1();
-        await this.testModPow();
-
-        await this.testPrivateVariables();
+        this.testVoteMath();
     }
 }
 

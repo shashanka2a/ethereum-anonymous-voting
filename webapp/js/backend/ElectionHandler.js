@@ -4,7 +4,7 @@ class ElectionHandler {
         this.account = account;
         this.web3 = web3;
         this.address = address;
-        this.abi = JSON.parse('[{"inputs":[{"internalType":"string[]","name":"_candidates","type":"string[]"},{"internalType":"address[]","name":"_voters","type":"address[]"},{"internalType":"bytes","name":"_p","type":"bytes"},{"internalType":"bytes","name":"_g","type":"bytes"},{"internalType":"address","name":"_owner","type":"address"},{"internalType":"string","name":"_name","type":"string"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"bytes","name":"_gv","type":"bytes"},{"internalType":"bytes","name":"_pk","type":"bytes"},{"internalType":"address","name":"_a","type":"address"}],"name":"calculatePKHash","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_a","type":"address"}],"name":"canIVote","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getAllCandidateVotes","outputs":[{"internalType":"uint256[]","name":"","type":"uint256[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getAllPK","outputs":[{"internalType":"bytes[]","name":"","type":"bytes[]"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"string","name":"_candidate","type":"string"}],"name":"getCandidateVotes","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getCandidates","outputs":[{"internalType":"string[]","name":"","type":"string[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getEncryptedVotes","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getG","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getM","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getP","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getRound","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getVoters","outputs":[{"internalType":"address[]","name":"","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getWinner","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_a","type":"address"}],"name":"hasSubmittedPK","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_a","type":"address"}],"name":"hasSubmittedVote","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"uint256[]","name":"_candidateVotes","type":"uint256[]"}],"name":"proveWinner","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes","name":"_pk","type":"bytes"},{"internalType":"bytes","name":"_gv","type":"bytes"},{"internalType":"bytes","name":"_r","type":"bytes"}],"name":"submitPK","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes","name":"_encVote","type":"bytes"}],"name":"vote","outputs":[],"stateMutability":"nonpayable","type":"function"}]');
+        this.abi = JSON.parse('[{"inputs":[{"internalType":"string[]","name":"_candidates","type":"string[]"},{"internalType":"address[]","name":"_voters","type":"address[]"},{"internalType":"bytes","name":"_p","type":"bytes"},{"internalType":"bytes","name":"_g","type":"bytes"},{"internalType":"address","name":"_owner","type":"address"},{"internalType":"string","name":"_name","type":"string"}],"stateMutability":"nonpayable","type":"constructor"},{"inputs":[{"internalType":"bytes","name":"_gv","type":"bytes"},{"internalType":"bytes","name":"_pk","type":"bytes"},{"internalType":"address","name":"_a","type":"address"}],"name":"calculatePKHash","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_a","type":"address"}],"name":"canIVote","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getAllPK","outputs":[{"internalType":"bytes[]","name":"","type":"bytes[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getAllVotes","outputs":[{"internalType":"bytes[]","name":"","type":"bytes[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getCandidates","outputs":[{"internalType":"string[]","name":"","type":"string[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getG","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getM","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getP","outputs":[{"internalType":"bytes","name":"","type":"bytes"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getRound","outputs":[{"internalType":"uint256","name":"","type":"uint256"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getVoters","outputs":[{"internalType":"address[]","name":"","type":"address[]"}],"stateMutability":"view","type":"function"},{"inputs":[],"name":"getWinner","outputs":[{"internalType":"string","name":"","type":"string"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_a","type":"address"}],"name":"hasSubmittedPK","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"address","name":"_a","type":"address"}],"name":"hasSubmittedVote","outputs":[{"internalType":"bool","name":"","type":"bool"}],"stateMutability":"view","type":"function"},{"inputs":[{"internalType":"bytes","name":"_pk","type":"bytes"},{"internalType":"bytes","name":"_gv","type":"bytes"},{"internalType":"bytes","name":"_r","type":"bytes"}],"name":"submitPK","outputs":[],"stateMutability":"nonpayable","type":"function"},{"inputs":[{"internalType":"bytes","name":"_encVote","type":"bytes"}],"name":"vote","outputs":[],"stateMutability":"nonpayable","type":"function"}]');
 
         this.contract = null;
         this.candidates = [];
@@ -75,6 +75,9 @@ class ElectionHandler {
         this.canIVote = await this.contract.methods.canIVote(this.account).call({from: this.account});
         console.log(`Can I vote: ${this.canIVote}`);
 
+        this.voters = await this.contract.methods.getVoters().call({from: this.account});
+        console.log(`Voters: ${this.voters}`);
+
         let pBytes = await this.contract.methods.getP().call({from: this.account});
         this.p = new BigInteger(this.remove0x(pBytes), 16);
         console.log(`Election prime p: ${this.p.toString()}`);
@@ -134,6 +137,8 @@ class ElectionHandler {
             this.secretX = new BigInteger('2');
         }
         this.pk = this.g.modPow(this.secretX, this.p);
+        console.log(`Secret x is ${this.secretX}`);
+        console.log(`PK is ${this.pk}`);
 
         return [this.secretX.toString(), this.pk.toString()];
     }
@@ -186,28 +191,37 @@ class ElectionHandler {
 
         let encVote = new BigInteger('1');
         for (let i = 0; i < this.voters.length; i++) {
-            let otherPK = new BigInteger(this.remove0x(pks[i][0]), 16);
-            if (this.voters[i] == this.account) {
+            let otherPK = new BigInteger(this.remove0x(pks[i]), 16);
+            console.log(`pk ${i} is ${otherPK}`);
+            console.log(`I am ${this.account}, and other account is ${this.voters[i]}`);
+            if (this.voters[i].toLowerCase() == this.account.toLowerCase()) {
+                console.log(`i am ${this.voters[i]}`);
                 isInv = true;
                 continue;
             }
 
             if (isInv) {
-                encVote = encVote.multiply(otherPK.modInverse(this.p));
+                let modInv = otherPK.modInverse(this.p);
+                console.log(`Mod inverse of ${otherPK} is ${modInv}`);
+                encVote = encVote.multiply(modInv);
                 encVote = encVote.mod(this.p);
             } else {
                 encVote = encVote.multiply(otherPK);
                 encVote = encVote.mod(this.p);
             }
         }
-        let actualVote = new BigInteger('2');
-        actualVote = actualVote.pow((new BigInteger((candidateIndex * this.m).toString())));
+        console.log(`g^y = ${encVote}`);
+        let vi = new BigInteger('2');
+        vi = vi.pow((new BigInteger((candidateIndex * this.m).toString())));
+        console.log(`vi is ${vi}`);
         encVote = encVote.modPow(this.secretX, this.p);
-        encVote = encVote.multiply(this.g.modPow(actualVote, this.p));
+        console.log(`g^(xy) = ${encVote}`);
+        encVote = encVote.multiply(this.g.modPow(vi, this.p));
         encVote = encVote.mod(this.p);
+        console.log(`encrypted vote: ${encVote}`);
         
         
-        receipt = await this.contract.methods.vote(this.prepend0x(encVote.toString(16))).send({from: this.account});
+        let receipt = await this.contract.methods.vote(this.prepend0x(encVote.toString(16))).send({from: this.account});
         console.log(receipt);
     }
 
@@ -220,28 +234,62 @@ class ElectionHandler {
             let voteBN = new BigInteger(voteBreakup[i].toString());
             potentialSum = potentialSum.add((voteBN.multiply(twoToM)));
         }
-        return encVotesVal.equals(gBig.modPow(potentialSum, this.p));
+        let potentialVoteVal = gBig.modPow(potentialSum, this.p);
+        console.log(`[${voteBreakup}] = ${potentialVoteVal}}`);
+        return encVotesVal.equals(potentialVoteVal);
+    }
+
+    calculateEncryptedVotes(voteArray) {
+        let encryptedVoteVal = new BigInteger('1');
+        for (let i = 0; i < voteArray.length; i++) {
+            let voteBI = new BigInteger(this.remove0x(voteArray[i]), 16);
+            console.log(`Vote ${i}: ${voteBI.toString()}`);
+            encryptedVoteVal = (encryptedVoteVal.multiply(voteBI)).mod(this.p);
+        }
+        return encryptedVoteVal;
     }
 
     async determineElectionWinner() {
         console.log(`Getting all encrypted votes`);
-        let encVotesValBytes = await this.contract.methods.getEncryptedVotes().call({from: this.account});
-        let encVotesVal = new BigInteger(this.remove0x(encVotesValBytes), 16);
+        let allVotes = await this.contract.methods.getAllVotes().call({from: this.account});
+        console.log(allVotes);
+        let encVotesVal = this.calculateEncryptedVotes(allVotes);
         console.log(`Encrypted votes: ${encVotesVal.toString()}`);
 
         let numVotes = this.voters.length;
+        console.log(`Num Votes: ${numVotes}`);
 
         let voteBreakup = [];
-        for (x in this.candidates) {
+        for (let x in this.candidates) {
             voteBreakup.push(0);
         }
         voteBreakup[0] = numVotes;
 
         while(voteBreakup[voteBreakup.length - 1] != numVotes) {
+            console.log(`Checking vote breakup`);
+            console.log(voteBreakup);
             if (this.checkSum(voteBreakup, encVotesVal)) {
                 console.log(`Correct breakup found: ${voteBreakup}`);
-                let receipt = await this.contract.methods.proveWinner(checkSum(voteBreakup, encVotesVal)).send({from: this.account});
-                console.log(receipt);
+                // let receipt = await this.contract.methods.proveWinner(checkSum(voteBreakup, encVotesVal)).send({from: this.account});
+                // console.log(receipt);
+                this.voteBreakup = voteBreakup;
+
+                this.winner = '';
+                this.winnerVotes = -1;
+                for (let z = 0; z < this.voteBreakup.length; z++) {
+                    if (this.voteBreakup[z] > this.winnerVotes) {
+                        this.winner = this.candidates[z];
+                        this.winnerVotes = this.voteBreakup[z];
+                    }
+                }
+
+                for (let z = 0; z < this.voteBreakup.length; z++) {
+                    if (this.voteBreakup[z] == this.winnerVotes && this.candidates[z] != this.winner) {
+                        console.log(`There is a tie`);
+                        this.winner = 'There is a tie';
+                    }
+                }
+
                 return voteBreakup;
             }
 
@@ -262,19 +310,33 @@ class ElectionHandler {
                 voteBreakup[i]--;
                 voteBreakup[i+1]++;
             }
+
+            if (voteBreakup[voteBreakup.length - 1] == numVotes) {
+                console.log(`Checking vote breakup`);
+                console.log(voteBreakup);
+                if (this.checkSum(voteBreakup, encVotesVal)) {
+                    console.log(`Correct breakup found: ${voteBreakup}`);
+                    // let receipt = await this.contract.methods.proveWinner(checkSum(voteBreakup, encVotesVal)).send({from: this.account});
+                    // console.log(receipt);
+                    return voteBreakup;
+                }
+            }
         }
         console.error(`no breakup found?????!!!`);
+        alert('No vote breakup found');
+        throw 'no vote breakup found';
     }
 
     async getFinalVotes() {
         console.log('Getting final votes');
-        let finalVotes = await this.contract.methods.getAllCandidateVotes().call({from: this.account});
-        console.log(finalVotes);
-        return finalVotes;
+        // let finalVotes = await this.contract.methods.getAllCandidateVotes().call({from: this.account});
+        // console.log(finalVotes);
+        return this.voteBreakup;
     }
 
     async getWinner() {
-        this.winner = await this.contract.methods.getWinner().call({from: this.account});
+        // this.winner = await this.contract.methods.getWinner().call({from: this.account});
+
         return this.winner;
     }
 }

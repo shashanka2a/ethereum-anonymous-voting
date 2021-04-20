@@ -106,7 +106,7 @@ class UI {
             candidateGrid += '<div class="row">';
             for (let j = 0; j < 4 && i*4 + j < candidates.length; j++) {
                 let index = i*4 + j;
-                let voteNum = votes == null ? 'not available' : votes[i];
+                let voteNum = (votes == null ? 'not available' : votes[index]);
                 let isWinner = (winner == candidates[index]);
                 candidateGrid += this.generateCard(candidates[index], index, canVoteNow, voteNum, isWinner, size);
             }

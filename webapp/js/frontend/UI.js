@@ -78,14 +78,14 @@ class UI {
         for (let i = 0; i < candidateName.length; i++) {
             num += candidateName.charCodeAt(i);
         }
-        return (num % 37) + 1;
+        return (num % 50) + 1;
     }
 
     generateCard(candidateName, candidateIndex, canVoteNow, voteNum, isWinner, size=25) {
         return `
             <div class="column column-${size}">
                 <div class="card">
-                    <img src="img/faces/face (${this.simpleImageNumberHash(candidateName)}).png" alt="Avatar" style="width:100%">
+                    <img src="img/food/food (${this.simpleImageNumberHash(candidateName)}).png" alt="Avatar" style="width:100%">
                     <div class="container">
                         <h4><b>${candidateName}</b> ${isWinner ? '&#11088;' : ''}</h4>
                         <h6>Votes: ${voteNum}</h6>

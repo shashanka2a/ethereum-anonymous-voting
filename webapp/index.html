@@ -33,7 +33,6 @@
         <div>
             <h1>Anonymous Voting</h1>
         </div>
-        <button onclick="testBigNumbers.test()">Test BigNumbers</button>
         <div id="account-div">
             <h5 id="connected-account-header"></h5>
             <div id="can-vote-status"></div>
@@ -53,70 +52,76 @@
         <!--  -->
         <div id="election-connection-div" class="invisible">
             <h3>Enter Election Address</h3>
-            <sub>0xb579ce4022EFF128c0c163F6c38b59E6dde8Eb80</sub>
+            <sub>0x315F0619ED921fD7F59C5cE90aBd45b8b6b24cA8</sub>
             <input id="contract-address-input" placeholder="Election Address">
             <button onclick="app.connectContract()">Connect to Election</button>
             <hr>
         </div>
 
+        <!-- Shows all the cryptography related things -->
         <div id="round1-div" class="invisible">
             <h3>Setup Your Public Key Encryption</h3>
-            <div>Prime <sub lang="latex"> ( p ) </sub>: <b><span id="p" class="no-overflow"></span></b></div>
-            <div>Generator <sub lang="latex"> ( g ) </sub>: <b><span id="g"></span></b></div>
-            <div>Your Secret &nbsp; <sub lang="latex"> ( x \in_{R} \mathbb{Z}_{p} )</sub> : <b><span id="secret-x" class="no-overflow">Not
-                        Setup</span></b></div>
-            <div>Your Public Key &nbsp; <sub lang="latex"> ( g^{x}\mod{p} ) </sub>: <b><span id="pk" class="no-overflow">Not
-                        Setup</span></b></div>
-            <div id='reestablish-secret-div'>Enter your previously assigned secret x value: <input id='secret-x-input'></div>
+            <button type="button" class="collapsible">Prime <sub lang="latex"> ( p ) </sub></button>
+            <div class="content">
+                <p><span id="p" class="no-overflow"></span></p>
+            </div>
+
+            <button type="button" class="collapsible">Generator <sub lang="latex"> ( g ) </sub></button>
+            <div class="content">
+                <p><span id="g"></span></p>
+            </div>
+
+            <button type="button" class="collapsible">Your Secret &nbsp; <sub lang="latex"> ( x \in_{R} \mathbb{Z}_{p}
+                    )</sub></button>
+            <div class="content">
+                <p><span id="secret-x" class="no-overflow">Not
+                        Setup</span></p>
+            </div>
+
+            <button type="button" class="collapsible">Your Public Key &nbsp; <sub lang="latex"> ( g^{x}\mod{p} )
+                </sub></button>
+            <div class="content">
+                <p><span id="pk" class="no-overflow">Not Setup</span></p>
+            </div>
+
+            <div id='reestablish-secret-div'>Enter your previously assigned secret x value: <input id='secret-x-input'>
+            </div>
             <button id='round1-button' onclick="app.setupPK()">Setup</button>
             <hr>
         </div>
 
+        <!-- Shows the button to calculate the winner -->
         <div id="round3-div">
             <h3>Calculate Winner</h3>
             <button onclick="app.calculateWinner()">Calculate</button>
         </div>
 
+        <!-- Shows the winner of the election -->
         <div id="round4-div">
             <h3>Election Finished</h3>
             <h4>Winner: <b><span id="winner"></span></b></h4>
         </div>
 
-
+        <!-- Shows the grid of candidates -->
         <div id="candidates-div" class="invisible">
             <div id="candidates-grid">
                 <div class="row">
-                    <div class="column" onclick="alert('hi')"><span class="column-interior">Candidate 1</span></div>
-                    <div class="column"><span class="column-interior">Candidate 2</span></div>
-                    <div class="column"><span class="column-interior">Candidate 3</span></div>
-                    <div class="column"><span class="column-interior">Candidate 4</span></div>
+                    <div class="column"></div>
                 </div>
             </div>
         </div>
 
-        <!-- <div class="row">
-            <div class="column">
-                <div class="card">
-                    <img src="img/faces/face (1).png" alt="Avatar" style="width:100%">
-                    <div class="container">
-                        <h4><b>Candidate Name</b> &#11088;</h4>
-                        <h6>Votes: <span>0</span></h6>
-                        <button onclick="app.vote('index')">vote</button>
-                    </div>
-                </div>
-            </div>
-        </div> -->
 
     </div>
+    <!-- math -->
     <script src="js/jsbn.js"></script>
     <script src="js/jsbn2.js"></script>
-    <!-- <script src="js/require.js"></script> -->
-    <script src="js/TestBigNumbers.js"></script>
+    <script src="js/frontend/collapsible.js"></script>
     <script src="js/frontend/UI.js"></script>
     <script src="js/backend/ElectionHandler.js"></script>
     <script src="js/Processor.js"></script>
+    <!-- Main app manager -->
     <script src="js/App.js"></script>
-    <!-- <script src="js/connection.js"></script> -->
 </body>
 
 </html>

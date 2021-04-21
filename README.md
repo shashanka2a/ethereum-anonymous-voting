@@ -9,4 +9,4 @@ Smart contract for anonymous voting on the Ethereum blockchain
 **Webapp**
 - Milligram (CSS-framework) https://milligram.io/
 - css-loader https://github.com/raphaelfabeni/css-loader
-- Emoji Icons made by [iconixar](https://www.flaticon.com/authors/iconixar) from [www.flaticon.com](https://www.flaticon.com/)
+- Food Icons made by [Freepik](https://www.flaticon.com) from [www.flaticon.com](https://www.flaticon.com/)

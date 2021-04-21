@@ -1,4 +1,4 @@
-// Class that modifies the frontend
+// Class that modifies the frontend ui
 class UI {
     constructor() {
         this.spinnerOverlay = document.getElementById('spinner-overlay');
@@ -23,10 +23,13 @@ class UI {
         this.hideElem(this.electionCompletedDiv);
     }
 
+
+    // show spinner overlay to indicate loading
     startSpinner() {
         this.spinnerOverlay.classList.add('is-active');
     }
 
+    // stop spinner overlay to indicate loading is finished
     stopSpinner(t = 300) {
         setTimeout(() => {
             this.spinnerOverlay.classList.remove('is-active');

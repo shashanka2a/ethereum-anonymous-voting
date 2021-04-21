@@ -102,7 +102,7 @@ class UI {
 
         let size = (candidates.length < 4) ? 33 : 25;
 
-        for (let i = 0; i < Math.ceil(candidates.length / 5); i++) {
+        for (let i = 0; i < Math.ceil(candidates.length / 4); i++) {
             candidateGrid += '<div class="row">';
             for (let j = 0; j < 4 && i*4 + j < candidates.length; j++) {
                 let index = i*4 + j;

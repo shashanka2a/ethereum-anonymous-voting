@@ -60,24 +60,25 @@
 
         <!-- Shows all the cryptography related things -->
         <div id="round1-div" class="invisible">
-            <h3>Setup Your Public Key Encryption</h3>
+            <h3>Public Key Encryption</h3>
+            <!-- Prime (p) -->
             <button type="button" class="collapsible">Prime <sub lang="latex"> ( p ) </sub></button>
             <div class="content">
                 <p><span id="p" class="no-overflow"></span></p>
             </div>
-
+            <!-- Generator (g) -->
             <button type="button" class="collapsible">Generator <sub lang="latex"> ( g ) </sub></button>
             <div class="content">
                 <p><span id="g"></span></p>
             </div>
-
+            <!-- User's Secret (x) value -->
             <button type="button" class="collapsible">Your Secret &nbsp; <sub lang="latex"> ( x \in_{R} \mathbb{Z}_{p}
                     )</sub></button>
             <div class="content">
                 <p><span id="secret-x" class="no-overflow">Not
                         Setup</span></p>
             </div>
-
+            <!-- User's Public Key (pk) -->
             <button type="button" class="collapsible">Your Public Key &nbsp; <sub lang="latex"> ( g^{x}\mod{p} )
                 </sub></button>
             <div class="content">
@@ -116,6 +117,7 @@
     <!-- math -->
     <script src="js/jsbn.js"></script>
     <script src="js/jsbn2.js"></script>
+    <!-- Webapp other code -->
     <script src="js/frontend/collapsible.js"></script>
     <script src="js/frontend/UI.js"></script>
     <script src="js/backend/ElectionHandler.js"></script>

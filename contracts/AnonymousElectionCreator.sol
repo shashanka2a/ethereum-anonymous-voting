@@ -3,11 +3,11 @@ pragma solidity >=0.8.0 <0.9.0;
 import "./AnonymousElection.sol";
 
 contract AnonymousElectionCreator {
+    // who is the owner of this election creator
     address private owner;
     
-    
-    mapping(string => address) private electionsMapping;
-    string[] private electionsList;
+    mapping(string => address) private electionsMapping; // maps names to election address
+    string[] private electionsList; // list of names of elections
     
     constructor() {
         owner = msg.sender;
@@ -19,7 +19,7 @@ contract AnonymousElectionCreator {
         require(electionsMapping[_electionName] == address(0), "Election name not unique. An election already exists with that name");
         require(_candidates.length > 1 && _voters.length > 0, "candidate list and voter list both need to have non-zero length, >1 candidate");
         
-        // require none of the candidates are the empty string. If there is tie, winner is technically the empty string
+        // require none of the candidates are the empty string.
         for (uint256 i = 0; i < _candidates.length; i++) {
             require(bytes(_candidates[i]).length != 0, "candidate cannot be empty string");
         }
@@ -46,11 +46,8 @@ contract AnonymousElectionCreator {
         return electionsMapping[_electionName];
     }
     
-    
     // return list of all election names created with this election creator
     function getAllElections() public view returns (string[] memory){
         return electionsList;
     }
-    
-    
 }

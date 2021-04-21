@@ -111,7 +111,7 @@ class ElectionHandler {
         console.log('generating pk for first time');
         let pStr = this.p.toString();
         let secretXStr = '';
-        for (let i = pStr.length - 2; i > 0; i--) {
+        for (let i = pStr.length - 200; i > 0; i--) {
             secretXStr = secretXStr + (Math.floor(10 * Math.random())).toString();
         }
         this.secretX = new BigInteger(secretXStr);
@@ -258,7 +258,7 @@ class ElectionHandler {
         voteBreakup[0] = numVotes;
 
         let keepGoing = true;
-        while(voteBreakup[voteBreakup.length - 1] > numVotes && keepGoing) {
+        while(!(voteBreakup[voteBreakup.length - 1] > numVotes) && keepGoing) {
             console.log(`Checking vote breakup`);
             console.log(voteBreakup);
             if (this.checkSum(voteBreakup, encVotesVal)) { // if this is the correct breakup

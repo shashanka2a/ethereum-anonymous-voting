@@ -1,8 +1,7 @@
 
 # ethereum-anonymous-voting
 
-Smart contract project for anonymous voting on the Ethereum blockchain
-Created as final project for Spring 2021 CIS-700 course.
+Smart contract project for anonymous voting on the Ethereum blockchain.
 Assumes honest-but-curious voters, malicious outsiders
 
 ### This project is divided into three distinct parts:
@@ -48,6 +47,8 @@ This webapp, through **[MetaMask](https://metamask.io/)**, connects to an instan
 
 
 ## Credits
+Filecoin Foundation and co:rise would like to thank Elijah Jasso, University of Pennsylvania alumn and software engineer at Coinbase, for authoring and contributing this assignment!
+
 **Algorithms, Cryptography and Inspiration**
 
  - Hao, F., Ryan, P., & Zielinski, P. (2010). Anonymous voting by two-round public discussion. *Information Security, IET, 4, 62 - 67.*

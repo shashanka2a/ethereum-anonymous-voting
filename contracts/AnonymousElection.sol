@@ -95,8 +95,8 @@ contract AnonymousElection {
         allPKBytes[voterToIndex[msg.sender]] = _pk;
 
         // Increment submittedPKs and check if everyone has submitted their pk
-        TODO: increment submittedPKs
-        TODO: Check if everyone has submitted their pk, and set the round to 2.
+        // TODO: increment submittedPKs
+        // TODO: Check if everyone has submitted their pk, and set the round to 2.
     }
 
 
@@ -108,9 +108,9 @@ contract AnonymousElection {
     // use require to ensure you are in the right round and the voter can vote.
 
 
-        // TODO: increase submittedVotes and check if everyone has submitted their vote,
-        // set the round to round 3.
-    }
+    // TODO: increase submittedVotes and check if everyone has submitted their vote,
+    // set the round to round 3.
+
 
     // TODO: Develop the following getter functions.
     // return prime p
